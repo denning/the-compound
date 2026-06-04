@@ -31,6 +31,7 @@
     </header>
     <hr class="rule rule-double" />
 
+    <!-- Part I — Accumulation -->
     <section class="hero">
       <p class="eyebrow"><span class="brk">·</span>&nbsp;&nbsp;In&nbsp;<em id="years-word">thirty</em>&nbsp;years&nbsp;&nbsp;<span class="brk">·</span></p>
       <h1 class="figure">
@@ -69,7 +70,7 @@
     <section class="chart-panel">
       <header class="chart-head">
         <span class="chart-eyebrow">Fig.&nbsp;1 — Trajectory of Capital</span>
-        <nav class="horizon" aria-label="Time horizon">
+        <nav class="horizon" data-horizon="accum" aria-label="Accumulation years">
           <button class="h-btn" data-years="10"><span class="num">10</span><span class="lbl">years</span></button>
           <button class="h-btn" data-years="20"><span class="num">20</span><span class="lbl">years</span></button>
           <button class="h-btn active" data-years="30"><span class="num">30</span><span class="lbl">years</span></button>
@@ -83,18 +84,82 @@
       <p class="chart-foot">
         <span class="lg lg-nominal"><span class="swatch"></span>Nominal value</span>
         <span class="lg-sep">/</span>
-        <span class="lg lg-real"><span class="swatch"></span>Real value, in today's euros</span>
+        <span class="lg lg-real"><span class="swatch"></span>Real value, in today's money</span>
         <span class="lg-sep">/</span>
         <span class="lg lg-contrib"><span class="swatch"></span>Sum contributed</span>
       </p>
     </section>
 
+    <!-- Editorial divider — Part II -->
+    <div class="part-break">
+      <hr class="rule" />
+      <span class="part-tag">·&nbsp;II&nbsp;·</span>
+      <hr class="rule" />
+    </div>
+
+    <!-- Part II — Drawdown -->
+    <section class="hero hero-2">
+      <p class="eyebrow"><span class="brk">·</span>&nbsp;&nbsp;From which, for&nbsp;<em id="ret-years-word">twenty-five</em>&nbsp;years&nbsp;&nbsp;<span class="brk">·</span></p>
+      <h1 class="figure">
+        <span class="curr js-sym">€</span><span id="ret-income">4,992</span><span class="unit">/month</span>
+      </h1>
+      <p class="caption">
+        …a passive monthly income in today's purchasing power, equivalent at retirement's start to <span class="pull-real"><span class="js-sym">€</span><span id="ret-income-nom">9,041</span><span class="unit-soft">/month</span></span>.
+      </p>
+    </section>
+
     <hr class="rule" />
+
+    <section class="ledger">
+      <dl>
+        <div>
+          <dt>Annual Income</dt>
+          <dd><span class="ld-curr js-sym">€</span><span id="ret-annual">59,904</span></dd>
+        </div>
+        <div>
+          <dt>Effective Rate</dt>
+          <dd><span id="ret-rate">7.02</span><span class="ld-suffix">%</span></dd>
+        </div>
+        <div>
+          <dt>At Retirement Start</dt>
+          <dd><span class="ld-curr js-sym">€</span><span id="ret-start">9,041</span><span class="ld-suffix-thin">/mo</span></dd>
+        </div>
+        <div>
+          <dt>Sum Withdrawn</dt>
+          <dd><span class="ld-curr js-sym">€</span><span id="ret-total">3,621,000</span></dd>
+        </div>
+      </dl>
+    </section>
+
+    <hr class="rule" />
+
+    <section class="chart-panel">
+      <header class="chart-head">
+        <span class="chart-eyebrow">Fig.&nbsp;2 — Drawdown of Capital</span>
+        <nav class="horizon" data-horizon="retire" aria-label="Retirement years">
+          <button class="h-btn" data-years="20"><span class="num">20</span><span class="lbl">years</span></button>
+          <button class="h-btn active" data-years="25"><span class="num">25</span><span class="lbl">years</span></button>
+          <button class="h-btn" data-years="30"><span class="num">30</span><span class="lbl">years</span></button>
+          <button class="h-btn" data-years="35"><span class="num">35</span><span class="lbl">years</span></button>
+        </nav>
+      </header>
+      <div class="chart-wrap">
+        <svg id="chart-2" viewBox="0 0 800 380" preserveAspectRatio="none" aria-label="Capital decumulation"></svg>
+        <div class="hover-tip" id="tip-2" hidden></div>
+      </div>
+      <p class="chart-foot">
+        <span class="lg lg-nominal"><span class="swatch"></span>Capital, nominal</span>
+        <span class="lg-sep">/</span>
+        <span class="lg lg-real"><span class="swatch"></span>Capital, in today's money</span>
+      </p>
+    </section>
+
+    <hr class="rule rule-double" />
 
     <section class="controls">
       <header class="controls-head">
-        <span class="controls-eyebrow">II — Assumptions</span>
-        <span class="controls-aside">Adjust freely. The chart redraws as you go.</span>
+        <span class="controls-eyebrow">III — Assumptions</span>
+        <span class="controls-aside">Adjust freely. The figures redraw as you go.</span>
       </header>
 
       <div class="ctrl-grid">
@@ -110,7 +175,7 @@
           <div class="slider-rail">
             <input type="range" id="principal" min="0" max="500000" step="500" value="10000" />
           </div>
-          <div class="range-marks"><span>0</span><span>€500,000</span></div>
+          <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>500,000</span></div>
         </div>
 
         <div class="ctrl">
@@ -124,7 +189,7 @@
           <div class="slider-rail">
             <input type="range" id="monthly" min="0" max="5000" step="50" value="1200" />
           </div>
-          <div class="range-marks"><span>0</span><span>€5,000</span></div>
+          <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>5,000</span></div>
         </div>
 
         <div class="ctrl">
@@ -163,7 +228,7 @@
     <footer class="colophon">
       <span>Set in <em>Fraunces</em> and <em>IBM Plex Mono</em>.</span>
       <span class="col-dot">·</span>
-      <span>Compounded monthly, end-of-period contributions.</span>
+      <span>Compounded monthly.</span>
       <span class="col-dot">·</span>
       <span>A projection — not a guarantee.</span>
     </footer>
