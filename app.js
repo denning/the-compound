@@ -9,19 +9,17 @@
 
   const $ = (id) => document.getElementById(id);
 
-  const fmtEUR = (n) => {
-    const rounded = Math.round(n);
-    return rounded.toLocaleString('de-DE');
-  };
+  const fmtEUR = (n) => Math.round(n).toLocaleString('en-US');
   const fmtEURShort = (n) => {
     const abs = Math.abs(n);
     if (abs >= 1_000_000) return '€' + (n / 1_000_000).toFixed(n >= 10_000_000 ? 0 : 1) + 'M';
     if (abs >= 1_000) return '€' + Math.round(n / 1_000) + 'k';
     return '€' + Math.round(n);
   };
+  const fmtMul = (n) => (Math.round(n * 100) / 100).toFixed(2);
   const parseNum = (s) => {
     if (typeof s !== 'string') return NaN;
-    const cleaned = s.replace(/[^\d.,-]/g, '').replace(/\./g, '').replace(',', '.');
+    const cleaned = s.replace(/[^\d.,-]/g, '').replace(/,/g, '');
     return parseFloat(cleaned);
   };
   const parseDecimal = (s) => {
@@ -29,8 +27,9 @@
     return parseFloat(s.replace(',', '.'));
   };
 
+  const YEAR_WORDS = { 10: 'ten', 20: 'twenty', 30: 'thirty', 40: 'forty' };
+
   // ---- projection ----
-  // monthly compounding, contributions at end of month
   function project(years) {
     const months = years * 12;
     const rMonthly = state.annualReturn / 12;
@@ -59,34 +58,24 @@
   // ---- chart ----
   const svg = $('chart');
   const NS = 'http://www.w3.org/2000/svg';
-  const VB = { w: 800, h: 360 };
-  const PAD = { t: 18, r: 18, b: 28, l: 56 };
+  const VB = { w: 800, h: 380 };
+  const PAD = { t: 28, r: 32, b: 36, l: 64 };
 
   function buildDefs() {
     const defs = document.createElementNS(NS, 'defs');
     defs.innerHTML = `
-      <linearGradient id="g-nominal" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#67e8f9" stop-opacity="0.55"/>
-        <stop offset="100%" stop-color="#67e8f9" stop-opacity="0"/>
-      </linearGradient>
-      <linearGradient id="g-real" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#f0abfc" stop-opacity="0.55"/>
-        <stop offset="100%" stop-color="#f0abfc" stop-opacity="0"/>
-      </linearGradient>
+      <pattern id="hatch-real" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="5" stroke="#d2664a" stroke-width="0.7" opacity="0.55"/>
+      </pattern>
     `;
     svg.appendChild(defs);
   }
   buildDefs();
 
-  function scaleX(year, maxYear) {
-    return PAD.l + (year / maxYear) * (VB.w - PAD.l - PAD.r);
-  }
-  function scaleY(val, maxVal) {
-    return VB.h - PAD.b - (val / maxVal) * (VB.h - PAD.t - PAD.b);
-  }
+  const scaleX = (year, maxYear) => PAD.l + (year / maxYear) * (VB.w - PAD.l - PAD.r);
+  const scaleY = (val, maxVal) => VB.h - PAD.b - (val / maxVal) * (VB.h - PAD.t - PAD.b);
 
   function smoothPath(pts) {
-    // Catmull-Rom-ish smooth path; pts is [{x,y}, ...]
     if (pts.length < 2) return '';
     let d = `M${pts[0].x},${pts[0].y}`;
     for (let i = 0; i < pts.length - 1; i++) {
@@ -117,124 +106,130 @@
     return nice * base;
   }
 
+  function el(tag, attrs, parent) {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs || {})) node.setAttribute(k, v);
+    if (parent) parent.appendChild(node);
+    return node;
+  }
+
   let lastRender = null;
 
   function render() {
     const pts = project(state.years);
     const maxNominal = pts[pts.length - 1].nominal;
-    const yMax = niceCeil(maxNominal * 1.05);
+    const yMax = niceCeil(maxNominal * 1.08);
     const xMax = state.years;
 
-    // clear (preserve defs)
     while (svg.childNodes.length > 1) svg.removeChild(svg.lastChild);
 
-    // gridlines + y labels (5 steps)
+    // y gridlines + labels
     const steps = 5;
     for (let i = 0; i <= steps; i++) {
       const v = (yMax * i) / steps;
       const y = scaleY(v, yMax);
-      const line = document.createElementNS(NS, 'line');
-      line.setAttribute('class', 'grid-line');
-      line.setAttribute('x1', PAD.l);
-      line.setAttribute('x2', VB.w - PAD.r);
-      line.setAttribute('y1', y);
-      line.setAttribute('y2', y);
-      svg.appendChild(line);
-      const lbl = document.createElementNS(NS, 'text');
-      lbl.setAttribute('class', 'axis-label');
-      lbl.setAttribute('x', PAD.l - 8);
-      lbl.setAttribute('y', y + 3);
-      lbl.setAttribute('text-anchor', 'end');
+      el('line', {
+        class: 'grid-line',
+        x1: PAD.l, x2: VB.w - PAD.r,
+        y1: y, y2: y,
+      }, svg);
+      const lbl = el('text', {
+        class: 'y-label',
+        x: PAD.l - 10,
+        y: y + 3,
+        'text-anchor': 'end',
+      }, svg);
       lbl.textContent = fmtEURShort(v);
-      svg.appendChild(lbl);
     }
 
-    // x labels — every 5y, plus 0 and end
-    const xTickStep = state.years <= 10 ? 2 : 5;
+    // baseline
+    el('line', {
+      class: 'baseline',
+      x1: PAD.l, x2: VB.w - PAD.r,
+      y1: scaleY(0, yMax), y2: scaleY(0, yMax),
+    }, svg);
+
+    // x labels
+    const xTickStep = state.years <= 10 ? 2 : state.years <= 20 ? 5 : 5;
     for (let yr = 0; yr <= state.years; yr += xTickStep) {
       const x = scaleX(yr, xMax);
-      const lbl = document.createElementNS(NS, 'text');
-      lbl.setAttribute('class', 'axis-label');
-      lbl.setAttribute('x', x);
-      lbl.setAttribute('y', VB.h - PAD.b + 16);
-      lbl.setAttribute('text-anchor', 'middle');
-      lbl.textContent = yr + 'y';
-      svg.appendChild(lbl);
+      const lbl = el('text', {
+        class: 'x-label',
+        x,
+        y: VB.h - PAD.b + 18,
+        'text-anchor': 'middle',
+      }, svg);
+      lbl.textContent = yr;
     }
+    // x axis caption
+    const xCap = el('text', {
+      class: 'axis-cap',
+      x: (PAD.l + (VB.w - PAD.r)) / 2,
+      y: VB.h - PAD.b + 32,
+      'text-anchor': 'middle',
+    }, svg);
+    xCap.textContent = 'years from now';
 
-    // build point arrays
+    // point arrays
     const nomPts = pts.map(p => ({ x: scaleX(p.year, xMax), y: scaleY(p.nominal, yMax) }));
     const realPts = pts.map(p => ({ x: scaleX(p.year, xMax), y: scaleY(p.real, yMax) }));
     const contribPts = pts.map(p => ({ x: scaleX(p.year, xMax), y: scaleY(p.contrib, yMax) }));
 
-    // areas (need closed path along bottom)
     const baseY = scaleY(0, yMax);
     const nomLine = smoothPath(nomPts);
     const realLine = smoothPath(realPts);
     const contribLine = smoothPath(contribPts);
 
-    const areaNom = document.createElementNS(NS, 'path');
-    areaNom.setAttribute('class', 'area-nominal');
-    areaNom.setAttribute('d', `${nomLine} L${nomPts[nomPts.length-1].x},${baseY} L${nomPts[0].x},${baseY} Z`);
-    svg.appendChild(areaNom);
+    // nominal area (soft tint)
+    el('path', {
+      class: 'area-nominal',
+      d: `${nomLine} L${nomPts[nomPts.length-1].x},${baseY} L${nomPts[0].x},${baseY} Z`,
+    }, svg);
 
-    const areaReal = document.createElementNS(NS, 'path');
-    areaReal.setAttribute('class', 'area-real');
-    areaReal.setAttribute('d', `${realLine} L${realPts[realPts.length-1].x},${baseY} L${realPts[0].x},${baseY} Z`);
-    svg.appendChild(areaReal);
+    // real area (diagonal hatching)
+    el('path', {
+      class: 'area-real-hatch',
+      d: `${realLine} L${realPts[realPts.length-1].x},${baseY} L${realPts[0].x},${baseY} Z`,
+    }, svg);
 
-    // contrib line
-    const contribEl = document.createElementNS(NS, 'path');
-    contribEl.setAttribute('class', 'line-contrib');
-    contribEl.setAttribute('d', contribLine);
-    svg.appendChild(contribEl);
+    // contrib line (dashed)
+    el('path', { class: 'line-contrib', d: contribLine }, svg);
 
     // real line
-    const realEl = document.createElementNS(NS, 'path');
-    realEl.setAttribute('class', 'line-real');
-    realEl.setAttribute('d', realLine);
-    svg.appendChild(realEl);
+    el('path', { class: 'line-real', d: realLine }, svg);
 
     // nominal line
-    const nomEl = document.createElementNS(NS, 'path');
-    nomEl.setAttribute('class', 'line-nominal');
-    nomEl.setAttribute('d', nomLine);
-    svg.appendChild(nomEl);
+    el('path', { class: 'line-nominal', d: nomLine }, svg);
 
-    // store for hover
     lastRender = { pts, nomPts, realPts, contribPts, xMax, yMax };
 
-    // header stats
+    // hero + ledger
     const last = pts[pts.length - 1];
-    $('horizon-label').textContent = state.years;
+    const growth = last.nominal - last.contrib;
+    const erosion = last.nominal - last.real;
+    const multiple = last.contrib > 0 ? last.nominal / last.contrib : 0;
+
+    $('years-word').textContent = YEAR_WORDS[state.years] || String(state.years);
     $('total-nominal').textContent = fmtEUR(last.nominal);
     $('total-real').textContent = '€' + fmtEUR(last.real);
-    $('contrib-line').textContent = '€' + fmtEUR(last.contrib) + ' contributed';
-    $('growth-line').textContent = '€' + fmtEUR(last.nominal - last.contrib) + ' growth';
+    $('contrib-line').textContent = fmtEUR(last.contrib);
+    $('growth-line').textContent = fmtEUR(growth);
+    $('multiple-line').textContent = fmtMul(multiple);
+    $('erosion-line').textContent = fmtEUR(erosion);
   }
 
-  // ---- hover interaction ----
+  // ---- hover ----
   const tip = $('tip');
   let hoverEls = null;
 
   function ensureHoverEls() {
     if (hoverEls) return;
-    const line = document.createElementNS(NS, 'line');
-    line.setAttribute('class', 'hover-line');
-    line.setAttribute('y1', PAD.t);
-    line.setAttribute('y2', VB.h - PAD.b);
+    const line = el('line', { class: 'hover-line', y1: PAD.t, y2: VB.h - PAD.b }, svg);
     line.style.display = 'none';
-    svg.appendChild(line);
-    const dotN = document.createElementNS(NS, 'circle');
-    dotN.setAttribute('class', 'hover-dot n');
-    dotN.setAttribute('r', 4.5);
+    const dotN = el('circle', { class: 'hover-dot n', r: 4 }, svg);
     dotN.style.display = 'none';
-    svg.appendChild(dotN);
-    const dotR = document.createElementNS(NS, 'circle');
-    dotR.setAttribute('class', 'hover-dot r');
-    dotR.setAttribute('r', 4.5);
+    const dotR = el('circle', { class: 'hover-dot r', r: 4 }, svg);
     dotR.style.display = 'none';
-    svg.appendChild(dotR);
     hoverEls = { line, dotN, dotR };
   }
 
@@ -242,15 +237,15 @@
     if (!lastRender) return;
     ensureHoverEls();
     const rect = svg.getBoundingClientRect();
-    const xRatio = (clientX - rect.left) / rect.width;
-    const xView = PAD.l + xRatio * (VB.w - PAD.l - PAD.r) - PAD.l + PAD.l; // identity, kept for clarity
-    // year from xRatio:
-    const usable = (VB.w - PAD.l - PAD.r);
-    const xInUsable = clientX - rect.left - (rect.width * (PAD.l / VB.w));
-    const yearFrac = Math.max(0, Math.min(1, xInUsable / (rect.width * usable / VB.w))) * state.years;
-    // nearest data point
+    // map clientX to year using the SVG's usable plot area
+    const usableSvg = VB.w - PAD.l - PAD.r;
+    const xInSvg = (clientX - rect.left) / rect.width * VB.w;
+    const xInPlot = xInSvg - PAD.l;
+    const ratio = Math.max(0, Math.min(1, xInPlot / usableSvg));
+    const yearFrac = ratio * state.years;
     let idx = Math.round(yearFrac);
     idx = Math.max(0, Math.min(lastRender.pts.length - 1, idx));
+
     const p = lastRender.pts[idx];
     const px = lastRender.nomPts[idx].x;
     const pyN = lastRender.nomPts[idx].y;
@@ -262,18 +257,18 @@
     hoverEls.dotN.setAttribute('cx', px); hoverEls.dotN.setAttribute('cy', pyN); hoverEls.dotN.style.display = '';
     hoverEls.dotR.setAttribute('cx', px); hoverEls.dotR.setAttribute('cy', pyR); hoverEls.dotR.style.display = '';
 
-    // tooltip position (relative to chart-wrap)
     const wrap = svg.parentElement;
     const wrapRect = wrap.getBoundingClientRect();
     const tipX = rect.left - wrapRect.left + (px / VB.w) * rect.width;
     const tipY = rect.top - wrapRect.top + (Math.min(pyN, pyR) / VB.h) * rect.height;
     tip.style.left = tipX + 'px';
     tip.style.top = tipY + 'px';
+    const yearLabel = p.year === 0 ? 'Today' : `Year ${p.year}`;
     tip.innerHTML = `
-      <div class="tip-year">Year ${p.year}</div>
-      <div class="tip-row"><span class="tip-n">Nominal</span><b>€${fmtEUR(p.nominal)}</b></div>
-      <div class="tip-row"><span class="tip-r">Real</span><b>€${fmtEUR(p.real)}</b></div>
-      <div class="tip-row"><span class="tip-c">Contributed</span><b>€${fmtEUR(p.contrib)}</b></div>
+      <div class="tip-year">${yearLabel}</div>
+      <div class="tip-row"><span>Nominal</span><b class="tip-n">€${fmtEUR(p.nominal)}</b></div>
+      <div class="tip-row"><span>Real</span><b class="tip-r">€${fmtEUR(p.real)}</b></div>
+      <div class="tip-row"><span>Paid in</span><b>€${fmtEUR(p.contrib)}</b></div>
     `;
     tip.hidden = false;
   }
@@ -289,12 +284,12 @@
   svg.addEventListener('touchmove', (e) => { if (e.touches[0]) showHover(e.touches[0].clientX); }, { passive: true });
   svg.addEventListener('touchend', hideHover);
 
-  // ---- controls wiring ----
-  function setSliderFill(el) {
-    const min = parseFloat(el.min), max = parseFloat(el.max);
-    const v = parseFloat(el.value);
+  // ---- controls ----
+  function setSliderFill(elx) {
+    const min = parseFloat(elx.min), max = parseFloat(elx.max);
+    const v = parseFloat(elx.value);
     const pct = ((v - min) / (max - min)) * 100;
-    el.style.setProperty('--fill', pct + '%');
+    elx.style.setProperty('--fill', pct + '%');
   }
 
   function wireMoney(rangeId, numId, key) {
@@ -317,9 +312,7 @@
         render();
       }
     });
-    num.addEventListener('blur', () => {
-      num.value = fmtEUR(state[key]);
-    });
+    num.addEventListener('blur', () => { num.value = fmtEUR(state[key]); });
   }
 
   function wirePercent(rangeId, numId, key) {
@@ -342,9 +335,7 @@
         render();
       }
     });
-    num.addEventListener('blur', () => {
-      num.value = (state[key] * 100).toFixed(1);
-    });
+    num.addEventListener('blur', () => { num.value = (state[key] * 100).toFixed(1); });
   }
 
   wireMoney('principal', 'principal-num', 'principal');
@@ -352,10 +343,9 @@
   wirePercent('return', 'return-num', 'annualReturn');
   wirePercent('inflation', 'inflation-num', 'inflation');
 
-  // horizon tabs
-  document.querySelectorAll('.ht').forEach(btn => {
+  document.querySelectorAll('.h-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.ht').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.h-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       state.years = parseInt(btn.dataset.years, 10);
       render();

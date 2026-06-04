@@ -3,108 +3,164 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Retirement — what could become of it</title>
+  <title>The Compound — A Projection</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..700,0..100,0..1&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <div class="mesh" aria-hidden="true">
-    <div class="blob blob-a"></div>
-    <div class="blob blob-b"></div>
-    <div class="blob blob-c"></div>
+  <div class="paper" aria-hidden="true">
+    <div class="vignette"></div>
     <div class="grain"></div>
   </div>
 
-  <main class="stage">
-    <header class="hero glass">
-      <p class="eyebrow">In <span id="horizon-label">30</span> years, you could have</p>
-      <h1 class="figure">
-        <span class="currency">€</span><span id="total-nominal">0</span>
-      </h1>
-      <p class="sub">
-        Worth <span id="total-real">€0</span> in today's money
-        <span class="dot">·</span>
-        <span id="contrib-line">€0 contributed</span>
-        <span class="dot">·</span>
-        <span id="growth-line">€0 growth</span>
-      </p>
-    </header>
+  <main class="folio">
 
-    <section class="chart-card glass">
-      <div class="chart-head">
-        <div class="legend">
-          <span class="lg lg-nominal"><span class="swatch"></span>Nominal</span>
-          <span class="lg lg-real"><span class="swatch"></span>Today's money</span>
-          <span class="lg lg-contrib"><span class="swatch"></span>You put in</span>
+    <header class="masthead">
+      <span class="mh-left">Vol.&nbsp;I &nbsp;·&nbsp; N°&nbsp;01</span>
+      <span class="mh-center">— The Compound —</span>
+      <span class="mh-right">A Private Projection</span>
+    </header>
+    <hr class="rule rule-double" />
+
+    <section class="hero">
+      <p class="eyebrow"><span class="brk">·</span>&nbsp;&nbsp;In&nbsp;<em id="years-word">thirty</em>&nbsp;years&nbsp;&nbsp;<span class="brk">·</span></p>
+      <h1 class="figure">
+        <span class="curr">€</span><span id="total-nominal">1,545,130</span>
+      </h1>
+      <p class="caption">
+        …being a projection of your savings, compounded monthly, amounting in today's purchasing power to <span class="pull-real" id="total-real">€853,021</span>.
+      </p>
+    </section>
+
+    <hr class="rule" />
+
+    <section class="ledger">
+      <dl>
+        <div>
+          <dt>Contributed</dt>
+          <dd><span class="ld-curr">€</span><span id="contrib-line">442,000</span></dd>
         </div>
-        <div class="horizon-tabs" role="tablist" aria-label="Time horizon">
-          <button class="ht" data-years="10">10y</button>
-          <button class="ht" data-years="20">20y</button>
-          <button class="ht active" data-years="30">30y</button>
-          <button class="ht" data-years="40">40y</button>
+        <div>
+          <dt>Compound Growth</dt>
+          <dd><span class="ld-curr">€</span><span id="growth-line">1,103,130</span></dd>
         </div>
-      </div>
+        <div>
+          <dt>Multiple of Capital</dt>
+          <dd><span id="multiple-line">3.50</span><span class="ld-suffix">×</span></dd>
+        </div>
+        <div>
+          <dt>Inflation Drag</dt>
+          <dd><span class="ld-curr">€</span><span id="erosion-line">692,109</span></dd>
+        </div>
+      </dl>
+    </section>
+
+    <hr class="rule" />
+
+    <section class="chart-panel">
+      <header class="chart-head">
+        <span class="chart-eyebrow">Fig.&nbsp;1 — Trajectory of Capital</span>
+        <nav class="horizon" aria-label="Time horizon">
+          <button class="h-btn" data-years="10"><span class="num">10</span><span class="lbl">years</span></button>
+          <button class="h-btn" data-years="20"><span class="num">20</span><span class="lbl">years</span></button>
+          <button class="h-btn active" data-years="30"><span class="num">30</span><span class="lbl">years</span></button>
+          <button class="h-btn" data-years="40"><span class="num">40</span><span class="lbl">years</span></button>
+        </nav>
+      </header>
       <div class="chart-wrap">
-        <svg id="chart" viewBox="0 0 800 360" preserveAspectRatio="none" aria-label="Projected growth"></svg>
+        <svg id="chart" viewBox="0 0 800 380" preserveAspectRatio="none" aria-label="Projected growth"></svg>
         <div class="hover-tip" id="tip" hidden></div>
       </div>
+      <p class="chart-foot">
+        <span class="lg lg-nominal"><span class="swatch"></span>Nominal value</span>
+        <span class="lg-sep">/</span>
+        <span class="lg lg-real"><span class="swatch"></span>Real value, in today's euros</span>
+        <span class="lg-sep">/</span>
+        <span class="lg lg-contrib"><span class="swatch"></span>Sum contributed</span>
+      </p>
     </section>
+
+    <hr class="rule" />
 
     <section class="controls">
-      <div class="ctrl glass">
-        <div class="ctrl-head">
-          <label for="principal">Current investment</label>
-          <div class="num">
-            <span class="prefix">€</span>
-            <input type="text" inputmode="numeric" id="principal-num" value="10,000" />
-          </div>
-        </div>
-        <input type="range" id="principal" min="0" max="500000" step="500" value="10000" />
-        <div class="range-marks"><span>€0</span><span>€500k</span></div>
-      </div>
+      <header class="controls-head">
+        <span class="controls-eyebrow">II — Assumptions</span>
+        <span class="controls-aside">Adjust freely. The chart redraws as you go.</span>
+      </header>
 
-      <div class="ctrl glass">
-        <div class="ctrl-head">
-          <label for="monthly">Monthly contribution</label>
-          <div class="num">
-            <span class="prefix">€</span>
-            <input type="text" inputmode="numeric" id="monthly-num" value="1,200" />
-          </div>
-        </div>
-        <input type="range" id="monthly" min="0" max="5000" step="50" value="1200" />
-        <div class="range-marks"><span>€0</span><span>€5,000</span></div>
-      </div>
+      <div class="ctrl-grid">
 
-      <div class="ctrl glass">
-        <div class="ctrl-head">
-          <label for="return">Annual return</label>
-          <div class="num">
-            <input type="text" inputmode="decimal" id="return-num" value="7.0" />
-            <span class="suffix">%</span>
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="principal">i. Capital at hand</label>
+            <div class="num-field">
+              <span class="prefix">€</span>
+              <input type="text" inputmode="numeric" id="principal-num" value="10,000" />
+            </div>
           </div>
+          <div class="slider-rail">
+            <input type="range" id="principal" min="0" max="500000" step="500" value="10000" />
+          </div>
+          <div class="range-marks"><span>0</span><span>€500,000</span></div>
         </div>
-        <input type="range" id="return" min="0" max="15" step="0.1" value="7" />
-        <div class="range-marks"><span>0%</span><span>15%</span></div>
-      </div>
 
-      <div class="ctrl glass">
-        <div class="ctrl-head">
-          <label for="inflation">Inflation</label>
-          <div class="num">
-            <input type="text" inputmode="decimal" id="inflation-num" value="2.0" />
-            <span class="suffix">%</span>
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="monthly">ii. Monthly addition</label>
+            <div class="num-field">
+              <span class="prefix">€</span>
+              <input type="text" inputmode="numeric" id="monthly-num" value="1,200" />
+            </div>
           </div>
+          <div class="slider-rail">
+            <input type="range" id="monthly" min="0" max="5000" step="50" value="1200" />
+          </div>
+          <div class="range-marks"><span>0</span><span>€5,000</span></div>
         </div>
-        <input type="range" id="inflation" min="0" max="10" step="0.1" value="2" />
-        <div class="range-marks"><span>0%</span><span>10%</span></div>
+
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="return">iii. Annual return</label>
+            <div class="num-field">
+              <input type="text" inputmode="decimal" id="return-num" value="7.0" />
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="return" min="0" max="15" step="0.1" value="7" />
+          </div>
+          <div class="range-marks"><span>0%</span><span>15%</span></div>
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="inflation">iv. Inflation</label>
+            <div class="num-field">
+              <input type="text" inputmode="decimal" id="inflation-num" value="2.0" />
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="inflation" min="0" max="10" step="0.1" value="2" />
+          </div>
+          <div class="range-marks"><span>0%</span><span>10%</span></div>
+        </div>
+
       </div>
     </section>
 
-    <footer class="foot">
-      <span>Compounded monthly · numbers are projections, not promises</span>
+    <hr class="rule rule-double" />
+
+    <footer class="colophon">
+      <span>Set in <em>Fraunces</em> and <em>IBM Plex Mono</em>.</span>
+      <span class="col-dot">·</span>
+      <span>Compounded monthly, end-of-period contributions.</span>
+      <span class="col-dot">·</span>
+      <span>A projection — not a guarantee.</span>
     </footer>
+
   </main>
 
   <script src="app.js"></script>
