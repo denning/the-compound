@@ -20,14 +20,21 @@
     <header class="masthead">
       <span class="mh-left">Vol.&nbsp;I &nbsp;·&nbsp; N°&nbsp;01</span>
       <span class="mh-center">— The Compound —</span>
-      <span class="mh-right">A Private Projection</span>
+      <span class="mh-right">
+        <span class="mh-aside">denominated in</span>
+        <span class="cur-toggle" role="group" aria-label="Currency">
+          <button class="cur-opt active" data-cur="EUR" aria-label="Euros">€</button>
+          <span class="cur-divider" aria-hidden="true">/</span>
+          <button class="cur-opt" data-cur="USD" aria-label="Dollars">$</button>
+        </span>
+      </span>
     </header>
     <hr class="rule rule-double" />
 
     <section class="hero">
       <p class="eyebrow"><span class="brk">·</span>&nbsp;&nbsp;In&nbsp;<em id="years-word">thirty</em>&nbsp;years&nbsp;&nbsp;<span class="brk">·</span></p>
       <h1 class="figure">
-        <span class="curr">€</span><span id="total-nominal">1,545,130</span>
+        <span class="curr js-sym">€</span><span id="total-nominal">1,545,130</span>
       </h1>
       <p class="caption">
         …being a projection of your savings, compounded monthly, amounting in today's purchasing power to <span class="pull-real" id="total-real">€853,021</span>.
@@ -40,11 +47,11 @@
       <dl>
         <div>
           <dt>Contributed</dt>
-          <dd><span class="ld-curr">€</span><span id="contrib-line">442,000</span></dd>
+          <dd><span class="ld-curr js-sym">€</span><span id="contrib-line">442,000</span></dd>
         </div>
         <div>
           <dt>Compound Growth</dt>
-          <dd><span class="ld-curr">€</span><span id="growth-line">1,103,130</span></dd>
+          <dd><span class="ld-curr js-sym">€</span><span id="growth-line">1,103,130</span></dd>
         </div>
         <div>
           <dt>Multiple of Capital</dt>
@@ -52,7 +59,7 @@
         </div>
         <div>
           <dt>Inflation Drag</dt>
-          <dd><span class="ld-curr">€</span><span id="erosion-line">692,109</span></dd>
+          <dd><span class="ld-curr js-sym">€</span><span id="erosion-line">692,109</span></dd>
         </div>
       </dl>
     </section>
@@ -96,7 +103,7 @@
           <div class="ctrl-head">
             <label for="principal">i. Capital at hand</label>
             <div class="num-field">
-              <span class="prefix">€</span>
+              <span class="prefix js-sym">€</span>
               <input type="text" inputmode="numeric" id="principal-num" value="10,000" />
             </div>
           </div>
@@ -110,7 +117,7 @@
           <div class="ctrl-head">
             <label for="monthly">ii. Monthly addition</label>
             <div class="num-field">
-              <span class="prefix">€</span>
+              <span class="prefix js-sym">€</span>
               <input type="text" inputmode="numeric" id="monthly-num" value="1,200" />
             </div>
           </div>

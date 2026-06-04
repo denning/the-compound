@@ -1,20 +1,28 @@
 (() => {
+  const CUR_SYMBOLS = { EUR: '€', USD: '$' };
+  const savedCur = (() => {
+    try { return localStorage.getItem('compound.currency'); } catch { return null; }
+  })();
+
   const state = {
     principal: 10000,
     monthly: 1200,
     annualReturn: 0.07,
     inflation: 0.02,
     years: 30,
+    currency: CUR_SYMBOLS[savedCur] ? savedCur : 'EUR',
   };
 
   const $ = (id) => document.getElementById(id);
+  const sym = () => CUR_SYMBOLS[state.currency];
 
-  const fmtEUR = (n) => Math.round(n).toLocaleString('en-US');
-  const fmtEURShort = (n) => {
+  const fmtAmt = (n) => Math.round(n).toLocaleString('en-US');
+  const fmtAmtShort = (n) => {
+    const s = sym();
     const abs = Math.abs(n);
-    if (abs >= 1_000_000) return '€' + (n / 1_000_000).toFixed(n >= 10_000_000 ? 0 : 1) + 'M';
-    if (abs >= 1_000) return '€' + Math.round(n / 1_000) + 'k';
-    return '€' + Math.round(n);
+    if (abs >= 1_000_000) return s + (n / 1_000_000).toFixed(n >= 10_000_000 ? 0 : 1) + 'M';
+    if (abs >= 1_000) return s + Math.round(n / 1_000) + 'k';
+    return s + Math.round(n);
   };
   const fmtMul = (n) => (Math.round(n * 100) / 100).toFixed(2);
   const parseNum = (s) => {
@@ -139,7 +147,7 @@
         y: y + 3,
         'text-anchor': 'end',
       }, svg);
-      lbl.textContent = fmtEURShort(v);
+      lbl.textContent = fmtAmtShort(v);
     }
 
     // baseline
@@ -210,12 +218,12 @@
     const multiple = last.contrib > 0 ? last.nominal / last.contrib : 0;
 
     $('years-word').textContent = YEAR_WORDS[state.years] || String(state.years);
-    $('total-nominal').textContent = fmtEUR(last.nominal);
-    $('total-real').textContent = '€' + fmtEUR(last.real);
-    $('contrib-line').textContent = fmtEUR(last.contrib);
-    $('growth-line').textContent = fmtEUR(growth);
+    $('total-nominal').textContent = fmtAmt(last.nominal);
+    $('total-real').textContent = sym() + fmtAmt(last.real);
+    $('contrib-line').textContent = fmtAmt(last.contrib);
+    $('growth-line').textContent = fmtAmt(growth);
     $('multiple-line').textContent = fmtMul(multiple);
-    $('erosion-line').textContent = fmtEUR(erosion);
+    $('erosion-line').textContent = fmtAmt(erosion);
   }
 
   // ---- hover ----
@@ -264,11 +272,12 @@
     tip.style.left = tipX + 'px';
     tip.style.top = tipY + 'px';
     const yearLabel = p.year === 0 ? 'Today' : `Year ${p.year}`;
+    const cs = sym();
     tip.innerHTML = `
       <div class="tip-year">${yearLabel}</div>
-      <div class="tip-row"><span>Nominal</span><b class="tip-n">€${fmtEUR(p.nominal)}</b></div>
-      <div class="tip-row"><span>Real</span><b class="tip-r">€${fmtEUR(p.real)}</b></div>
-      <div class="tip-row"><span>Paid in</span><b>€${fmtEUR(p.contrib)}</b></div>
+      <div class="tip-row"><span>Nominal</span><b class="tip-n">${cs}${fmtAmt(p.nominal)}</b></div>
+      <div class="tip-row"><span>Real</span><b class="tip-r">${cs}${fmtAmt(p.real)}</b></div>
+      <div class="tip-row"><span>Paid in</span><b>${cs}${fmtAmt(p.contrib)}</b></div>
     `;
     tip.hidden = false;
   }
@@ -298,7 +307,7 @@
     setSliderFill(range);
     range.addEventListener('input', () => {
       state[key] = parseFloat(range.value);
-      num.value = fmtEUR(state[key]);
+      num.value = fmtAmt(state[key]);
       setSliderFill(range);
       render();
     });
@@ -312,7 +321,7 @@
         render();
       }
     });
-    num.addEventListener('blur', () => { num.value = fmtEUR(state[key]); });
+    num.addEventListener('blur', () => { num.value = fmtAmt(state[key]); });
   }
 
   function wirePercent(rangeId, numId, key) {
@@ -342,6 +351,24 @@
   wireMoney('monthly', 'monthly-num', 'monthly');
   wirePercent('return', 'return-num', 'annualReturn');
   wirePercent('inflation', 'inflation-num', 'inflation');
+
+  function applyCurrencySymbol() {
+    const s = sym();
+    document.querySelectorAll('.js-sym').forEach(n => n.textContent = s);
+    document.querySelectorAll('.cur-opt').forEach(b => {
+      b.classList.toggle('active', b.dataset.cur === state.currency);
+    });
+  }
+  document.querySelectorAll('.cur-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.currency === btn.dataset.cur) return;
+      state.currency = btn.dataset.cur;
+      try { localStorage.setItem('compound.currency', state.currency); } catch {}
+      applyCurrencySymbol();
+      render();
+    });
+  });
+  applyCurrencySymbol();
 
   document.querySelectorAll('.h-btn').forEach(btn => {
     btn.addEventListener('click', () => {

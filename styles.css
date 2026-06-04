@@ -110,7 +110,49 @@ body {
   color: var(--ink-soft);
 }
 .mh-left { text-align: left; }
-.mh-right { text-align: right; }
+.mh-right {
+  text-align: right;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.mh-aside {
+  /* inherits monospace small-caps from .masthead */
+}
+.cur-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px 4px;
+  border: 1px solid var(--rule);
+  background: rgba(255,255,255,0.015);
+}
+.cur-opt {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--ink-faint);
+  font-variation-settings: "opsz" 24, "SOFT" 80;
+  letter-spacing: 0;
+  text-transform: none;
+  transition: color 0.18s ease;
+}
+.cur-opt:hover { color: var(--ink-soft); }
+.cur-opt.active { color: var(--brass); }
+.cur-divider {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-faint);
+  line-height: 1;
+}
 .mh-center {
   font-family: var(--serif);
   font-style: italic;
@@ -656,6 +698,7 @@ input[type="range"]::-moz-range-thumb {
     gap: 6px;
   }
   .mh-left, .mh-right { text-align: center; }
+  .mh-right { justify-content: center; }
   .hero { padding: 32px 0 24px; }
   .ledger dl { grid-template-columns: repeat(2, 1fr); }
   .ledger dd { font-size: 22px; }
