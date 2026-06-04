@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Retirement — what could become of it</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="mesh" aria-hidden="true">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+    <div class="grain"></div>
+  </div>
+
+  <main class="stage">
+    <header class="hero glass">
+      <p class="eyebrow">In <span id="horizon-label">30</span> years, you could have</p>
+      <h1 class="figure">
+        <span class="currency">€</span><span id="total-nominal">0</span>
+      </h1>
+      <p class="sub">
+        Worth <span id="total-real">€0</span> in today's money
+        <span class="dot">·</span>
+        <span id="contrib-line">€0 contributed</span>
+        <span class="dot">·</span>
+        <span id="growth-line">€0 growth</span>
+      </p>
+    </header>
+
+    <section class="chart-card glass">
+      <div class="chart-head">
+        <div class="legend">
+          <span class="lg lg-nominal"><span class="swatch"></span>Nominal</span>
+          <span class="lg lg-real"><span class="swatch"></span>Today's money</span>
+          <span class="lg lg-contrib"><span class="swatch"></span>You put in</span>
+        </div>
+        <div class="horizon-tabs" role="tablist" aria-label="Time horizon">
+          <button class="ht" data-years="10">10y</button>
+          <button class="ht" data-years="20">20y</button>
+          <button class="ht active" data-years="30">30y</button>
+          <button class="ht" data-years="40">40y</button>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <svg id="chart" viewBox="0 0 800 360" preserveAspectRatio="none" aria-label="Projected growth"></svg>
+        <div class="hover-tip" id="tip" hidden></div>
+      </div>
+    </section>
+
+    <section class="controls">
+      <div class="ctrl glass">
+        <div class="ctrl-head">
+          <label for="principal">Current investment</label>
+          <div class="num">
+            <span class="prefix">€</span>
+            <input type="text" inputmode="numeric" id="principal-num" value="10,000" />
+          </div>
+        </div>
+        <input type="range" id="principal" min="0" max="500000" step="500" value="10000" />
+        <div class="range-marks"><span>€0</span><span>€500k</span></div>
+      </div>
+
+      <div class="ctrl glass">
+        <div class="ctrl-head">
+          <label for="monthly">Monthly contribution</label>
+          <div class="num">
+            <span class="prefix">€</span>
+            <input type="text" inputmode="numeric" id="monthly-num" value="1,200" />
+          </div>
+        </div>
+        <input type="range" id="monthly" min="0" max="5000" step="50" value="1200" />
+        <div class="range-marks"><span>€0</span><span>€5,000</span></div>
+      </div>
+
+      <div class="ctrl glass">
+        <div class="ctrl-head">
+          <label for="return">Annual return</label>
+          <div class="num">
+            <input type="text" inputmode="decimal" id="return-num" value="7.0" />
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <input type="range" id="return" min="0" max="15" step="0.1" value="7" />
+        <div class="range-marks"><span>0%</span><span>15%</span></div>
+      </div>
+
+      <div class="ctrl glass">
+        <div class="ctrl-head">
+          <label for="inflation">Inflation</label>
+          <div class="num">
+            <input type="text" inputmode="decimal" id="inflation-num" value="2.0" />
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <input type="range" id="inflation" min="0" max="10" step="0.1" value="2" />
+        <div class="range-marks"><span>0%</span><span>10%</span></div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>Compounded monthly · numbers are projections, not promises</span>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
