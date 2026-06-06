@@ -226,7 +226,7 @@ body {
 /* ─── hero ─── */
 .hero {
   text-align: center;
-  padding: 48px 0 36px;
+  padding: 32px 0 24px;
 }
 .hero-2 { padding: 28px 0 28px; }
 .hero-2 .figure {
@@ -263,7 +263,7 @@ body {
   font-family: var(--serif);
   font-weight: 400;
   font-variation-settings: "opsz" 144, "SOFT" 40, "WONK" 0;
-  font-size: clamp(80px, 14.5vw, 208px);
+  font-size: clamp(64px, 11.5vw, 168px);
   line-height: 0.92;
   letter-spacing: -0.035em;
   color: var(--ink);
@@ -450,7 +450,7 @@ body {
 }
 .chart-wrap svg {
   width: 100%;
-  height: clamp(340px, 52vh, 540px);
+  height: clamp(300px, 44vh, 460px);
   display: block;
   overflow: visible;
 }
@@ -537,9 +537,28 @@ body {
 .tip-n { color: var(--brass); }
 .tip-r { color: var(--terra); }
 
-/* ─── dials (input strip above Fig. 1) ─── */
+/* ─── workspace — side-by-side inputs (left) + chart (right) ─── */
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 56px;
+  align-items: start;
+  margin-top: 4px;
+}
+.workspace-left,
+.workspace-right {
+  min-width: 0;
+}
+@media (max-width: 1080px) {
+  .workspace {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+/* ─── dials (input strip — left column of workspace) ─── */
 .dials {
-  padding: 18px 0 6px;
+  padding: 4px 0 6px;
 }
 .dials .ctrl-grid {
   text-align: left;
@@ -547,29 +566,27 @@ body {
 
 /* ─── assumptions — quieter rate strip beneath the primary dials ─── */
 .assumptions {
-  margin-top: 40px;
-  padding-top: 28px;
+  margin-top: 32px;
+  padding-top: 20px;
   border-top: 1px solid var(--rule-soft);
   position: relative;
 }
 .assumptions-eyebrow {
   position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: -7px;
+  left: 0;
   display: inline-block;
-  padding: 0 14px;
+  padding: 0 8px 0 0;
   background: var(--paper);
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  color: var(--ink-dim);
-  font-variation-settings: "opsz" 18, "SOFT" 80;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 .assumptions-prop {
-  margin-top: 32px;
-  padding-top: 24px;
+  margin-top: 24px;
+  padding-top: 18px;
   border-top: 1px dashed var(--rule-soft);
 }
 
@@ -604,22 +621,19 @@ body {
 }
 .ctrl-grid-position {
   grid-template-columns: 1fr 1fr;
-  column-gap: 80px;
-  row-gap: 36px;
+  column-gap: 36px;
+  row-gap: 32px;
 }
 .ctrl-grid-assumptions {
-  grid-template-columns: repeat(3, 1fr);
-  column-gap: 48px;
-  row-gap: 24px;
+  grid-template-columns: 1fr;
+  row-gap: 14px;
 }
 @media (max-width: 1080px) {
   .ctrl-grid { grid-template-columns: repeat(2, 1fr); column-gap: 48px; }
   .ctrl-grid-position { column-gap: 48px; }
-  .ctrl-grid-assumptions { column-gap: 32px; }
 }
 @media (max-width: 760px) {
   .ctrl-grid-position { grid-template-columns: 1fr; }
-  .ctrl-grid-assumptions { grid-template-columns: 1fr; }
 }
 
 /* ─── ctrl tiers ─── */
@@ -630,43 +644,60 @@ body {
 .ctrl-primary .num-field input {
   font-size: 24px;
 }
+
+/* compact — single-line row: label | value | slider */
+.ctrl-compact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.1fr);
+  align-items: center;
+  column-gap: 16px;
+}
 .ctrl-compact .ctrl-head {
-  margin-bottom: 10px;
-  gap: 8px;
+  display: contents;
 }
 .ctrl-compact label {
   font-size: 13px;
   color: var(--ink-soft);
   font-variation-settings: "opsz" 18, "SOFT" 80;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .num-field-sm {
-  padding: 1px 2px 3px;
+  padding: 0 2px 1px;
+  border-bottom: 0;
 }
 .num-field-sm input {
-  font-size: 15px;
-  width: 4.5ch;
+  font-size: 14px;
+  width: 4ch;
   font-weight: 400;
 }
 .num-field-sm .prefix,
 .num-field-sm .suffix {
-  font-size: 12px;
+  font-size: 11px;
 }
 .slider-rail-sm {
-  padding: 4px 0 2px;
+  padding: 0;
 }
 .slider-rail-sm input[type="range"] {
-  height: 18px;
+  height: 16px;
 }
 .slider-rail-sm input[type="range"]::-webkit-slider-thumb {
-  width: 10px; height: 10px;
-  margin-top: -5px;
-  box-shadow: 0 0 0 3px var(--paper), 0 0 0 4px var(--brass);
+  width: 8px; height: 8px;
+  margin-top: -4px;
+  border: 0;
+  background: var(--brass);
+  box-shadow: 0 0 0 2.5px var(--paper);
 }
 .slider-rail-sm input[type="range"]::-moz-range-thumb {
-  width: 10px; height: 10px;
-  box-shadow: 0 0 0 3px var(--paper), 0 0 0 4px var(--brass);
+  width: 8px; height: 8px;
+  border: 0;
+  background: var(--brass);
+  box-shadow: 0 0 0 2.5px var(--paper);
 }
-.slider-rail-sm::before { display: none; }
+.slider-rail-sm input[type="range"]:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 0 2.5px var(--paper), 0 0 0 6px rgba(212, 166, 73, 0.16);
+}
 
 /* ─── property disclosure row ─── */
 .prop-toggle-row {
@@ -1079,19 +1110,6 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 0 4px var(--paper), 0 0 0 5px var(--brass);
 }
 
-/* tick marks on rail */
-.slider-rail::before {
-  content: "";
-  position: absolute;
-  left: 0; right: 0;
-  top: 20px;
-  height: 6px;
-  background-image: linear-gradient(to right, var(--ink-ghost) 1px, transparent 1px);
-  background-size: 10% 6px;
-  background-repeat: repeat-x;
-  pointer-events: none;
-  opacity: 0.7;
-}
 
 
 /* ─── colophon ─── */
