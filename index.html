@@ -70,6 +70,71 @@
 
     <hr class="rule" />
 
+    <section class="dials">
+      <span class="dials-eyebrow">— Adjust at will —</span>
+      <div class="ctrl-grid">
+
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="principal">i. Capital at hand<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Capital at hand"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Your starting lump sum — any liquid savings or investments you'll grow today. Future contributions go in "Monthly addition" below.</span></span></label>
+            <div class="num-field">
+              <span class="prefix js-sym">€</span>
+              <input type="text" inputmode="numeric" id="principal-num" value="10,000" />
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="principal" min="0" max="500000" step="500" value="10000" />
+          </div>
+          <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>500,000</span></div>
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="monthly">ii. Monthly addition<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Monthly addition"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Money you'll add each month from your income. Treated as steady end-of-month deposits over the entire projection.</span></span></label>
+            <div class="num-field">
+              <span class="prefix js-sym">€</span>
+              <input type="text" inputmode="numeric" id="monthly-num" value="1,200" />
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="monthly" min="0" max="5000" step="50" value="1200" />
+          </div>
+          <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>5,000</span></div>
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="return">iii. Annual return<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Annual return"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Expected nominal annual return on invested capital, before inflation. Long-run global stocks sit near <em>7%</em>; balanced portfolios <em>5–6%</em>; bonds <em>3–4%</em>.</span></span></label>
+            <div class="num-field">
+              <input type="text" inputmode="decimal" id="return-num" value="7.0" />
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="return" min="0" max="15" step="0.1" value="7" />
+          </div>
+          <div class="range-marks"><span>0%</span><span>15%</span></div>
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="inflation">iv. Inflation<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Inflation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How fast prices rise each year, eroding purchasing power. The ECB targets <em>2%</em>; treating it as constant over decades is a simplification.</span></span></label>
+            <div class="num-field">
+              <input type="text" inputmode="decimal" id="inflation-num" value="2.0" />
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="inflation" min="0" max="10" step="0.1" value="2" />
+          </div>
+          <div class="range-marks"><span>0%</span><span>10%</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="rule" />
+
     <section class="chart-panel">
       <header class="chart-head">
         <span class="chart-eyebrow">Fig.&nbsp;1 — Trajectory of Capital</span>
@@ -186,69 +251,9 @@
 
     <section class="controls">
       <header class="controls-head">
-        <span class="controls-eyebrow">III — Assumptions</span>
-        <span class="controls-aside">Adjust freely. The figures redraw as you go.</span>
+        <span class="controls-eyebrow">III — Property</span>
+        <span class="controls-aside">An optional extension.</span>
       </header>
-
-      <div class="ctrl-grid">
-
-        <div class="ctrl">
-          <div class="ctrl-head">
-            <label for="principal">i. Capital at hand<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Capital at hand"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Your starting lump sum — any liquid savings or investments you'll grow today. Future contributions go in "Monthly addition" below.</span></span></label>
-            <div class="num-field">
-              <span class="prefix js-sym">€</span>
-              <input type="text" inputmode="numeric" id="principal-num" value="10,000" />
-            </div>
-          </div>
-          <div class="slider-rail">
-            <input type="range" id="principal" min="0" max="500000" step="500" value="10000" />
-          </div>
-          <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>500,000</span></div>
-        </div>
-
-        <div class="ctrl">
-          <div class="ctrl-head">
-            <label for="monthly">ii. Monthly addition<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Monthly addition"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Money you'll add each month from your income. Treated as steady end-of-month deposits over the entire projection.</span></span></label>
-            <div class="num-field">
-              <span class="prefix js-sym">€</span>
-              <input type="text" inputmode="numeric" id="monthly-num" value="1,200" />
-            </div>
-          </div>
-          <div class="slider-rail">
-            <input type="range" id="monthly" min="0" max="5000" step="50" value="1200" />
-          </div>
-          <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>5,000</span></div>
-        </div>
-
-        <div class="ctrl">
-          <div class="ctrl-head">
-            <label for="return">iii. Annual return<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Annual return"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Expected nominal annual return on invested capital, before inflation. Long-run global stocks sit near <em>7%</em>; balanced portfolios <em>5–6%</em>; bonds <em>3–4%</em>.</span></span></label>
-            <div class="num-field">
-              <input type="text" inputmode="decimal" id="return-num" value="7.0" />
-              <span class="suffix">%</span>
-            </div>
-          </div>
-          <div class="slider-rail">
-            <input type="range" id="return" min="0" max="15" step="0.1" value="7" />
-          </div>
-          <div class="range-marks"><span>0%</span><span>15%</span></div>
-        </div>
-
-        <div class="ctrl">
-          <div class="ctrl-head">
-            <label for="inflation">iv. Inflation<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Inflation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How fast prices rise each year, eroding purchasing power. The ECB targets <em>2%</em>; treating it as constant over decades is a simplification.</span></span></label>
-            <div class="num-field">
-              <input type="text" inputmode="decimal" id="inflation-num" value="2.0" />
-              <span class="suffix">%</span>
-            </div>
-          </div>
-          <div class="slider-rail">
-            <input type="range" id="inflation" min="0" max="10" step="0.1" value="2" />
-          </div>
-          <div class="range-marks"><span>0%</span><span>10%</span></div>
-        </div>
-
-      </div>
 
       <!-- Property module (toggle + 5 inputs) -->
       <div class="prop-toggle-row">

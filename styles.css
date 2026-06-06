@@ -502,6 +502,25 @@ body {
 .tip-n { color: var(--brass); }
 .tip-r { color: var(--terra); }
 
+/* ─── dials (compact input strip above Fig. 1) ─── */
+.dials {
+  padding: 14px 0 6px;
+  text-align: center;
+}
+.dials-eyebrow {
+  display: inline-block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  font-variation-settings: "opsz" 18, "SOFT" 80;
+  margin: 0 0 26px;
+}
+.dials .ctrl-grid {
+  text-align: left;
+}
+
 /* ─── controls ─── */
 .controls-head {
   display: flex;
