@@ -651,6 +651,27 @@
   wireHorizon('.horizon[data-horizon="accum"]', 'years');
   wireHorizon('.horizon[data-horizon="retire"]', 'retirementYears');
 
+  // ─── help-mark tooltips ───
+  function closeAllTips() {
+    document.querySelectorAll('.help-anchor.is-open').forEach(a => a.classList.remove('is-open'));
+  }
+  document.querySelectorAll('.help-mark').forEach(mark => {
+    mark.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const anchor = mark.parentElement;
+      const wasOpen = anchor.classList.contains('is-open');
+      closeAllTips();
+      if (!wasOpen) anchor.classList.add('is-open');
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.help-anchor')) closeAllTips();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAllTips();
+  });
+
   // ─── property toggle ───
   function applyPropertyToggle() {
     document.querySelectorAll('.prop-opt').forEach(b => {

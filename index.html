@@ -50,19 +50,19 @@
     <section class="ledger">
       <dl>
         <div>
-          <dt>Contributed</dt>
+          <dt>Contributed<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Contributed"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Everything you'll have put in — starting capital plus all monthly additions, summed over the horizon. Anything beyond this is growth.</span></span></dt>
           <dd><span class="ld-curr js-sym">€</span><span id="contrib-line">442,000</span></dd>
         </div>
         <div>
-          <dt>Compound Growth</dt>
+          <dt>Compound Growth<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Compound Growth"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What your money earned beyond what you contributed. Compounding means each year's growth itself earns growth — the curve steepens over time.</span></span></dt>
           <dd><span class="ld-curr js-sym">€</span><span id="growth-line">1,103,130</span></dd>
         </div>
         <div>
-          <dt>Multiple of Capital</dt>
+          <dt>Multiple of Capital<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Multiple of Capital"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How many times your contributions grew, before inflation. <em>3.5×</em> means €100k contributed became €350k nominal at horizon end.</span></span></dt>
           <dd><span id="multiple-line">3.50</span><span class="ld-suffix">×</span></dd>
         </div>
         <div>
-          <dt>Inflation Drag</dt>
+          <dt>Inflation Drag<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Inflation Drag"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How much purchasing power inflation will silently erode from the nominal figure — the gap between what you'll have on paper and what it'll buy.</span></span></dt>
           <dd><span class="ld-curr js-sym">€</span><span id="erosion-line">692,109</span></dd>
         </div>
       </dl>
@@ -100,19 +100,19 @@
     <section class="ledger ledger-property" id="prop-ledger" hidden>
       <dl>
         <div>
-          <dt>Property Value</dt>
+          <dt>Property Value<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Property Value"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Projected market value at the end of the horizon, after compound appreciation. The mortgage is excluded — this is the asset alone.</span></span></dt>
           <dd><span class="ld-curr js-sym">€</span><span id="prop-value-end">336,910</span></dd>
         </div>
         <div>
-          <dt>Home Equity</dt>
+          <dt>Home Equity<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Home Equity"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Property value minus the remaining mortgage at horizon end. What you'd net selling, before transaction costs.</span></span></dt>
           <dd><span class="ld-curr js-sym">€</span><span id="prop-equity-end">336,910</span></dd>
         </div>
         <div>
-          <dt>Y<sub>1</sub> Equity Return</dt>
+          <dt>Y<sub>1</sub> Equity Return<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Year 1 Equity Return"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>First-year change in equity as a percentage of starting equity. Usually much higher than the raw appreciation rate — that's leverage made visible.</span></span></dt>
           <dd><span id="prop-roe-y1">21.50</span><span class="ld-suffix">%</span></dd>
         </div>
         <div>
-          <dt>Mortgage Cleared</dt>
+          <dt>Mortgage Cleared<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Mortgage Cleared"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>The year your mortgage is fully paid off. After that, equity equals property value and amortisation no longer contributes to growth.</span></span></dt>
           <dd><span id="prop-payoff">Yr 28</span></dd>
         </div>
       </dl>
@@ -141,19 +141,19 @@
     <section class="ledger">
       <dl>
         <div>
-          <dt>Annual Income</dt>
+          <dt>Annual Income<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Annual Income"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Sustainable yearly income in today's money. Stays constant in real terms — the nominal amount grows each year with inflation.</span></span></dt>
           <dd><span class="ld-curr js-sym">€</span><span id="ret-annual">59,899</span></dd>
         </div>
         <div>
-          <dt>Effective Rate</dt>
+          <dt>Effective Rate<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Effective Rate"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual withdrawal as a percentage of the starting real pot. Above ~4% generally depletes faster than the historic 'safe' threshold for 30 years.</span></span></dt>
           <dd><span id="ret-rate">7.02</span><span class="ld-suffix">%</span></dd>
         </div>
         <div>
-          <dt>At Retirement Start</dt>
+          <dt>At Retirement Start<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain At Retirement Start"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>The actual euros/dollars you'd withdraw on month one of retirement, in future money. Grows from there with inflation.</span></span></dt>
           <dd><span class="ld-curr js-sym">€</span><span id="ret-start">9,056</span><span class="ld-suffix-thin">/mo</span></dd>
         </div>
         <div>
-          <dt>Sum Withdrawn</dt>
+          <dt>Sum Withdrawn<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Sum Withdrawn"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Total nominal amount drawn over all retirement years. Much larger than the starting pot — each year's withdrawal is bigger than the last.</span></span></dt>
           <dd><span class="ld-curr js-sym">€</span><span id="ret-total">3,512,768</span></dd>
         </div>
       </dl>
@@ -194,7 +194,7 @@
 
         <div class="ctrl">
           <div class="ctrl-head">
-            <label for="principal">i. Capital at hand</label>
+            <label for="principal">i. Capital at hand<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Capital at hand"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Your starting lump sum — any liquid savings or investments you'll grow today. Future contributions go in "Monthly addition" below.</span></span></label>
             <div class="num-field">
               <span class="prefix js-sym">€</span>
               <input type="text" inputmode="numeric" id="principal-num" value="10,000" />
@@ -208,7 +208,7 @@
 
         <div class="ctrl">
           <div class="ctrl-head">
-            <label for="monthly">ii. Monthly addition</label>
+            <label for="monthly">ii. Monthly addition<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Monthly addition"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Money you'll add each month from your income. Treated as steady end-of-month deposits over the entire projection.</span></span></label>
             <div class="num-field">
               <span class="prefix js-sym">€</span>
               <input type="text" inputmode="numeric" id="monthly-num" value="1,200" />
@@ -222,7 +222,7 @@
 
         <div class="ctrl">
           <div class="ctrl-head">
-            <label for="return">iii. Annual return</label>
+            <label for="return">iii. Annual return<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Annual return"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Expected nominal annual return on invested capital, before inflation. Long-run global stocks sit near <em>7%</em>; balanced portfolios <em>5–6%</em>; bonds <em>3–4%</em>.</span></span></label>
             <div class="num-field">
               <input type="text" inputmode="decimal" id="return-num" value="7.0" />
               <span class="suffix">%</span>
@@ -236,7 +236,7 @@
 
         <div class="ctrl">
           <div class="ctrl-head">
-            <label for="inflation">iv. Inflation</label>
+            <label for="inflation">iv. Inflation<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Inflation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How fast prices rise each year, eroding purchasing power. The ECB targets <em>2%</em>; treating it as constant over decades is a simplification.</span></span></label>
             <div class="num-field">
               <input type="text" inputmode="decimal" id="inflation-num" value="2.0" />
               <span class="suffix">%</span>
@@ -254,7 +254,7 @@
       <div class="prop-toggle-row">
         <hr class="rule" />
         <span class="prop-toggle-wrap">
-          <span class="prop-label">Property asset</span>
+          <span class="prop-label">Property asset<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Property asset"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Whether to include a mortgaged appreciating asset (typically a home). <strong>Excluded</strong>: portfolio-only, default. <strong>Included</strong>: adds a stacked equity band to the chart, a property ledger, and shows how leverage compounds. Property equity is illiquid — it grows net worth but doesn't fund monthly income.</span></span></span>
           <span class="prop-toggle" role="group" aria-label="Property toggle">
             <button class="prop-opt active" data-prop="off">excluded</button>
             <span class="prop-divider-sep">/</span>
@@ -268,7 +268,7 @@
 
         <div class="ctrl">
           <div class="ctrl-head">
-            <label for="prop-value">Market value</label>
+            <label for="prop-value">Market value<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Market value"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What you could sell the property for today. <strong>Appreciation applies to this full value</strong> — not just your equity. Capturing that is the whole point of modelling the asset.</span></span></label>
             <div class="num-field">
               <span class="prefix js-sym">€</span>
               <input type="text" inputmode="numeric" id="prop-value-num" value="225,000" />
@@ -282,7 +282,7 @@
 
         <div class="ctrl">
           <div class="ctrl-head">
-            <label for="prop-appreciation">Appreciation</label>
+            <label for="prop-appreciation">Appreciation<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Appreciation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual rate the property's value grows. <em>Distinct from your portfolio return</em> — long-run residential averages sit near <em>3–4%</em> nominal. Can be set negative to model declines.</span></span></label>
             <div class="num-field">
               <input type="text" inputmode="decimal" id="prop-appreciation-num" value="4.0" />
               <span class="suffix">%</span>
@@ -296,7 +296,7 @@
 
         <div class="ctrl">
           <div class="ctrl-head">
-            <label for="prop-mortgage">Mortgage balance</label>
+            <label for="prop-mortgage">Mortgage balance<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Mortgage balance"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What you currently still owe. Amortises on a standard fixed-payment schedule over the years remaining — interest decreases, principal increases, balance falls to zero at term end.</span></span></label>
             <div class="num-field">
               <span class="prefix js-sym">€</span>
               <input type="text" inputmode="numeric" id="prop-mortgage-num" value="140,000" />
@@ -310,7 +310,7 @@
 
         <div class="ctrl">
           <div class="ctrl-head">
-            <label for="prop-rate">Mortgage rate</label>
+            <label for="prop-rate">Mortgage rate<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Mortgage rate"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual interest rate on your mortgage. Assumed fixed for the duration — variable-rate mortgages are a v2 concern.</span></span></label>
             <div class="num-field">
               <input type="text" inputmode="decimal" id="prop-rate-num" value="4.0" />
               <span class="suffix">%</span>
@@ -324,7 +324,7 @@
 
         <div class="ctrl">
           <div class="ctrl-head">
-            <label for="prop-term">Years remaining</label>
+            <label for="prop-term">Years remaining<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Years remaining"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Years left until the mortgage is fully paid off. <em>Independent of the projection horizon</em> — a 25-year mortgage with 18 years left clears at year 18, not when the chart ends.</span></span></label>
             <div class="num-field">
               <input type="text" inputmode="numeric" id="prop-term-num" value="28" />
               <span class="suffix">yr</span>

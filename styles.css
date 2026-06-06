@@ -611,6 +611,137 @@ body {
   margin: 0 1px 0 0;
 }
 
+/* ─── tooltip / explanation footnotes ─── */
+.help-anchor {
+  position: relative;
+  display: inline-block;
+  margin-left: 4px;
+  line-height: 1;
+}
+.help-mark {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0 2px;
+  cursor: help;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--ink-faint);
+  vertical-align: super;
+  line-height: 1;
+  transition: color 0.15s ease;
+  font-variation-settings: "opsz" 24, "SOFT" 100;
+}
+/* sized down in label-context (labels are larger than dt) */
+.ctrl label .help-mark,
+.prop-label .help-mark { font-size: 12px; }
+.help-mark:hover,
+.help-mark:focus-visible,
+.help-anchor.is-open .help-mark {
+  color: var(--brass);
+  outline: none;
+}
+.help-mark::after {
+  content: "†";
+}
+/* expanded invisible tap target for touch */
+.help-mark::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+.help-mark { position: relative; }
+.help-pop {
+  position: absolute;
+  top: 100%;
+  left: -8px;
+  margin-top: 8px;
+  width: 280px;
+  max-width: 80vw;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 12px 14px 13px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 13.5px;
+  line-height: 1.55;
+  letter-spacing: 0.005em;
+  color: var(--ink-soft);
+  font-variation-settings: "opsz" 18, "SOFT" 80;
+  text-transform: none;
+  text-align: left;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.18s ease, visibility 0s linear 0.2s;
+  box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+}
+.help-pop::before {
+  /* invisible bridge so cursor can move from dagger to popover */
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+}
+.help-pop::after {
+  /* arrow pointing up to the dagger */
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 14px;
+  width: 8px;
+  height: 8px;
+  background: var(--paper-2);
+  border-left: 1px solid var(--rule);
+  border-top: 1px solid var(--rule);
+  transform: rotate(45deg);
+}
+.help-anchor:hover .help-pop,
+.help-mark:focus-visible + .help-pop,
+.help-anchor.is-open .help-pop {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.18s ease;
+}
+.help-pop-title {
+  display: block;
+  font-family: var(--mono);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 7px;
+}
+.help-pop em {
+  color: var(--brass);
+  font-style: italic;
+}
+.help-pop strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+/* right-edge variant flips the popover to extend leftward */
+.help-anchor.help-anchor-right .help-pop {
+  left: auto;
+  right: -8px;
+}
+.help-anchor.help-anchor-right .help-pop::after {
+  left: auto;
+  right: 14px;
+}
+/* ledger dt uses small-caps mono — restore italic on popover content */
+.ledger dt .help-mark { text-transform: none; letter-spacing: 0; }
+
 /* ─── chart equity (stacked band) ─── */
 .chart-wrap svg .area-equity {
   fill: var(--olive);
