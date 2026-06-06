@@ -3,6 +3,7 @@
   const STORAGE_CUR = 'compound.currency';
   const STORAGE_PROP = 'compound.property';
   const STORAGE_PART2 = 'compound.partTwoVisible';
+  const STORAGE_LANG = 'compound.language';
 
   const savedCur = (() => {
     try { return localStorage.getItem(STORAGE_CUR); } catch { return null; }
@@ -16,6 +17,15 @@
   const savedPart2 = (() => {
     try { return localStorage.getItem(STORAGE_PART2) === '1'; } catch { return false; }
   })();
+  const savedLang = (() => {
+    try { return localStorage.getItem(STORAGE_LANG); } catch { return null; }
+  })();
+
+  const initialLang = (() => {
+    if (savedLang === 'ru' || savedLang === 'en') return savedLang;
+    const nav = (navigator.language || (navigator.languages && navigator.languages[0]) || 'en');
+    return nav.slice(0, 2).toLowerCase() === 'ru' ? 'ru' : 'en';
+  })();
 
   const state = {
     principal: 25000,
@@ -26,6 +36,7 @@
     years: 30,
     retirementYears: 25,
     currency: CUR_SYMBOLS[savedCur] ? savedCur : 'EUR',
+    language: initialLang,
     partTwoVisible: savedPart2,
     property: {
       enabled: savedProp?.enabled ?? false,
@@ -38,23 +49,226 @@
     },
   };
 
+  // ─── translations ───
+  const LANG = {
+    en: {
+      'page.title': 'The Compound — A Projection',
+      'masthead.volume': 'Vol.&nbsp;I &nbsp;·&nbsp; N°&nbsp;01',
+      'masthead.title': '— The Compound —',
+      'aria.lang': 'Language',
+      'aria.currency': 'Currency',
+      'aria.euros': 'Euros',
+      'aria.dollars': 'Dollars',
+      'aria.accum-years': 'Accumulation years',
+      'aria.retire-years': 'Retirement years',
+      'aria.fate': 'Property fate at retirement',
+
+      'hero1.eyebrow': '<span class="brk">·</span>&nbsp;&nbsp;In&nbsp;<em id="years-word">thirty</em>&nbsp;years&nbsp;&nbsp;<span class="brk">·</span>',
+      'hero1.caption.portfolio': '…a projection of your savings, amounting in today\'s purchasing power to <span class="pull-real" id="total-real">€853,021</span>.',
+      'hero1.caption.net': '…being your portfolio of <span class="pull-soft"><span class="js-sym">€</span><span id="portfolio-nom">1,545,130</span></span> plus property equity of <span class="pull-soft"><span class="js-sym">€</span><span id="equity-nom">285,000</span></span>, amounting in today\'s purchasing power to <span class="pull-real" id="total-real-net">€1,012,000</span>.',
+
+      'ledger.contributed': 'Contributed<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Contributed"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Everything you\'ll have put in — starting capital plus all monthly additions, summed over the horizon. Anything beyond this is growth.</span></span>',
+      'ledger.growth': 'Compound Growth<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Compound Growth"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What your money earned beyond what you contributed. Compounding means each year\'s growth itself earns growth — the curve steepens over time.</span></span>',
+      'ledger.multiple': 'Multiple of Capital<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Multiple of Capital"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How many times your contributions grew, before inflation. <em>3.5×</em> means €100k contributed became €350k nominal at horizon end.</span></span>',
+      'ledger.erosion': 'Inflation Drag<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Inflation Drag"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How much purchasing power inflation will silently erode from the nominal figure — the gap between what you\'ll have on paper and what it\'ll buy.</span></span>',
+
+      'input.principal': 'Capital at hand<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Capital at hand"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Your starting lump sum — any liquid savings or investments you\'ll grow today. Future contributions go in "Monthly addition" beside.</span></span>',
+      'input.monthly': 'Monthly addition<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Monthly addition"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Money you\'ll add each month, <em>in today\'s money</em>. Each year the deposit grows with inflation plus the <em>Contribution growth</em> rate, so the figure you set holds its purchasing power over the horizon.</span></span>',
+      'input.assumptions': 'Assumptions',
+      'input.return': 'Annual return<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Annual return"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Expected nominal annual return on invested capital, before inflation. Long-run global stocks sit near <em>7%</em>; balanced portfolios <em>5–6%</em>; bonds <em>3–4%</em>.</span></span>',
+      'input.inflation': 'Inflation<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Inflation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How fast prices rise each year, eroding purchasing power. The ECB targets <em>2%</em>; treating it as constant over decades is a simplification.</span></span>',
+      'input.contrib-growth': 'Contribution growth<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Contribution growth"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How much your contributions grow each year <em>above inflation</em>. <em>0%</em> holds them steady in today\'s money; <em>1–2%</em> reflects typical real wage growth over a career; negative figures model a step down in income.</span></span>',
+
+      'prop.toggle.off': 'Include a property asset',
+      'prop.toggle.on': 'Property asset · included',
+      'prop.toggle.help': '<button class="help-mark" type="button" aria-label="Explain Property asset"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Whether to include a mortgaged appreciating asset (typically a home). <strong>Excluded</strong>: portfolio-only, default. <strong>Included</strong>: adds a stacked equity band to the chart, a property ledger, and shows how leverage compounds. Property equity is illiquid — it grows net worth but doesn\'t fund monthly income.</span>',
+      'prop.value': 'Market value<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Market value"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What you could sell the property for today. <strong>Appreciation applies to this full value</strong> — not just your equity. Capturing that is the whole point of modelling the asset.</span></span>',
+      'prop.mortgage': 'Mortgage balance<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Mortgage balance"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What you currently still owe. Amortises on a standard fixed-payment schedule over the years remaining — interest decreases, principal increases, balance falls to zero at term end.</span></span>',
+      'prop.appreciation': 'Appreciation<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Appreciation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual rate the property\'s value grows. <em>Distinct from your portfolio return</em> — long-run residential averages sit near <em>3–4%</em> nominal. Can be set negative to model declines.</span></span>',
+      'prop.rate': 'Mortgage rate<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Mortgage rate"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual interest rate on your mortgage. Assumed fixed for the duration — variable-rate mortgages are a v2 concern.</span></span>',
+      'prop.term': 'Years remaining<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Years remaining"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Years left until the mortgage is fully paid off. <em>Independent of the projection horizon</em> — a 25-year mortgage with 18 years left clears at year 18, not when the chart ends.</span></span>',
+      'prop.term.suffix': 'yr',
+      'prop.followup.label': 'At retirement, the home is',
+      'prop.followup.kept': 'kept',
+      'prop.followup.sold': 'sold',
+
+      'chart1.eyebrow': 'Fig.&nbsp;1 — Trajectory of Capital',
+      'chart1.aria': 'Projected growth',
+      'chart.years': 'years',
+      'chart1.legend.nominal': 'Nominal value',
+      'chart1.legend.portfolio': 'Portfolio',
+      'chart1.legend.equity': 'Home equity',
+      'chart1.legend.real': 'Real value, in today\'s money',
+      'chart1.legend.net-real': 'Net worth, real',
+      'chart1.legend.contributed': 'Sum contributed',
+
+      'prop.addendum': '<span class="prop-addendum-mark">·</span> Property reaches <span class="prop-addendum-val"><span class="ld-curr js-sym">€</span><span id="prop-value-end">336,910</span></span>, of which <span class="prop-addendum-val"><span class="ld-curr js-sym">€</span><span id="prop-equity-end">336,910</span></span> is yours. Leverage delivers <span class="prop-addendum-val"><span id="prop-roe-y1">21.50</span>%</span> in Year 1; the mortgage clears <span class="prop-addendum-val" id="prop-payoff">Yr 28</span>.',
+
+      'part2.toggle': 'See your retirement income',
+      'hero2.eyebrow': '<span class="brk">·</span>&nbsp;&nbsp;<span id="ret-eyebrow-from">From which</span>, for&nbsp;<em id="ret-years-word">twenty-five</em>&nbsp;years&nbsp;&nbsp;<span class="brk">·</span>',
+      'hero2.unit.month': '/month',
+      'hero2.caption': '…a passive monthly income in today\'s purchasing power, equivalent at retirement\'s start to <span class="pull-real"><span class="js-sym">€</span><span id="ret-income-nom">9,056</span><span class="unit-soft">/month</span></span>.',
+
+      'ledger.annual-income': 'Annual Income<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Annual Income"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Sustainable yearly income in today\'s money. Stays constant in real terms — the nominal amount grows each year with inflation.</span></span>',
+      'ledger.effective-rate': 'Effective Rate<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Effective Rate"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual withdrawal as a percentage of the starting real pot. Above ~4% generally depletes faster than the historic \'safe\' threshold for 30 years.</span></span>',
+      'ledger.start': 'At Retirement Start<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain At Retirement Start"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>The actual euros/dollars you\'d withdraw on month one of retirement, in future money. Grows from there with inflation.</span></span>',
+      'ledger.start.suffix': '/mo',
+      'ledger.withdrawn': 'Sum Withdrawn<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Sum Withdrawn"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Total nominal amount drawn over all retirement years. Much larger than the starting pot — each year\'s withdrawal is bigger than the last.</span></span>',
+
+      'chart2.eyebrow': 'Fig.&nbsp;2 — Drawdown of Capital',
+      'chart2.aria': 'Capital decumulation',
+      'chart2.legend.nominal': 'Capital, nominal',
+      'chart2.legend.real': 'Capital, in today\'s money',
+
+      'colophon.fonts': 'Set in <em>Fraunces</em> and <em>IBM Plex Mono</em>.',
+      'colophon.monthly': 'Compounded monthly.',
+      'colophon.disclaimer': 'A projection — not a guarantee.',
+
+      'chart.zero.today': 'Today',
+      'chart.zero.retire': 'Retirement start',
+      'chart.x.accum': 'years from now',
+      'chart.x.retire': 'years into retirement',
+
+      'tip.year': 'Year',
+      'tip.networth': 'Net worth',
+      'tip.portfolio': 'Portfolio',
+      'tip.equity': 'Equity',
+      'tip.real': 'Real',
+      'tip.nominal': 'Nominal',
+      'tip.paidin': 'Paid in',
+
+      'hero2.from': 'From which',
+      'hero2.from.portfolio': 'From your portfolio',
+      'hero2.from.portfolio-home': 'From portfolio and home',
+
+      'prop.payoff.prefix': 'Yr',
+      'prop.payoff.none': '—',
+    },
+    ru: {
+      'page.title': 'Сложный процент — Проекция',
+      'masthead.volume': 'Том&nbsp;I &nbsp;·&nbsp; №&nbsp;01',
+      'masthead.title': '— Сложный процент —',
+      'aria.lang': 'Язык',
+      'aria.currency': 'Валюта',
+      'aria.euros': 'Евро',
+      'aria.dollars': 'Доллары',
+      'aria.accum-years': 'Годы накопления',
+      'aria.retire-years': 'Годы пенсии',
+      'aria.fate': 'Судьба жилья на пенсии',
+
+      'hero1.eyebrow': '<span class="brk">·</span>&nbsp;&nbsp;Через&nbsp;<em id="years-word">тридцать</em>&nbsp;лет&nbsp;&nbsp;<span class="brk">·</span>',
+      'hero1.caption.portfolio': '…проекция ваших сбережений, эквивалентная по сегодняшней покупательной способности <span class="pull-real" id="total-real">€853,021</span>.',
+      'hero1.caption.net': '…портфель в размере <span class="pull-soft"><span class="js-sym">€</span><span id="portfolio-nom">1 545 130</span></span> плюс капитал в недвижимости <span class="pull-soft"><span class="js-sym">€</span><span id="equity-nom">285 000</span></span>, эквивалентные по сегодняшней покупательной способности <span class="pull-real" id="total-real-net">€1 012 000</span>.',
+
+      'ledger.contributed': 'Внесено<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Внесено»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Всё, что вы внесёте — стартовый капитал плюс все ежемесячные пополнения за весь срок. Всё сверх этого — рост.</span></span>',
+      'ledger.growth': 'Сложный рост<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Сложный рост»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>То, что заработали ваши деньги сверх внесённого. Сложный процент означает, что каждый годовой прирост сам приносит доход — кривая со временем становится круче.</span></span>',
+      'ledger.multiple': 'Кратность капитала<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Кратность капитала»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Во сколько раз выросли ваши взносы до инфляции. <em>3,5×</em> означает, что внесённые €100k превратились в €350k номинально к концу срока.</span></span>',
+      'ledger.erosion': 'Инфляционные потери<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Пояснить «Инфляционные потери»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Сколько покупательной способности инфляция тихо съест из номинала — разрыв между тем, что будет на бумаге, и тем, что на это можно будет купить.</span></span>',
+
+      'input.principal': 'Имеющийся капитал<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Имеющийся капитал»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Ваш стартовый капитал — любые ликвидные сбережения или инвестиции, которые вы будете растить сегодня. Будущие пополнения идут в «Ежемесячное пополнение» рядом.</span></span>',
+      'input.monthly': 'Ежемесячное пополнение<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Пояснить «Ежемесячное пополнение»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Деньги, которые вы будете добавлять каждый месяц, <em>в сегодняшних деньгах</em>. Каждый год взнос растёт на инфляцию плюс ставку <em>Роста взносов</em>, так что заданная сумма сохраняет покупательную способность на всём горизонте.</span></span>',
+      'input.assumptions': 'Допущения',
+      'input.return': 'Годовая доходность<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Годовая доходность»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Ожидаемая номинальная годовая доходность инвестированного капитала до инфляции. Мировые акции на долгом сроке — около <em>7%</em>; сбалансированные портфели — <em>5–6%</em>; облигации — <em>3–4%</em>.</span></span>',
+      'input.inflation': 'Инфляция<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Инфляция»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Как быстро растут цены каждый год, съедая покупательную способность. ЕЦБ целится в <em>2%</em>; принимать её постоянной на десятилетия — упрощение.</span></span>',
+      'input.contrib-growth': 'Рост взносов<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Пояснить «Рост взносов»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Насколько ваши взносы растут каждый год <em>сверх инфляции</em>. <em>0%</em> держит их постоянными в сегодняшних деньгах; <em>1–2%</em> отражает типичный реальный рост зарплат за карьеру; отрицательные значения моделируют снижение дохода.</span></span>',
+
+      'prop.toggle.off': 'Добавить недвижимость',
+      'prop.toggle.on': 'Недвижимость · включена',
+      'prop.toggle.help': '<button class="help-mark" type="button" aria-label="Пояснить «Недвижимость»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Включать ли ипотечный дорожающий актив (обычно жильё). <strong>Без неё</strong>: только портфель, по умолчанию. <strong>С ней</strong>: добавляет на график полосу капитала в жилье, реестр недвижимости и показывает, как работает кредитное плечо. Капитал в жилье неликвиден — он растит чистую стоимость, но не финансирует ежемесячный доход.</span>',
+      'prop.value': 'Рыночная стоимость<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Рыночная стоимость»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>За сколько вы могли бы продать жильё сегодня. <strong>Рост стоимости применяется ко всей этой сумме</strong> — а не только к вашему капиталу. Уловить это — весь смысл моделирования актива.</span></span>',
+      'prop.mortgage': 'Остаток по ипотеке<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Пояснить «Остаток по ипотеке»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Сколько вы ещё должны. Гасится по стандартному графику с фиксированным платежом за оставшиеся годы — проценты убывают, основной долг растёт, остаток обнуляется к концу срока.</span></span>',
+      'prop.appreciation': 'Рост стоимости<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Рост стоимости»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Годовая ставка роста стоимости жилья. <em>Отличается от доходности портфеля</em> — долгосрочные средние по жилью около <em>3–4%</em> номинально. Можно задать отрицательной, чтобы смоделировать падение.</span></span>',
+      'prop.rate': 'Ставка по ипотеке<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Ставка по ипотеке»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Годовая процентная ставка по ипотеке. Принята фиксированной на весь срок — переменные ставки оставлены на v2.</span></span>',
+      'prop.term': 'Лет до погашения<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Пояснить «Лет до погашения»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Сколько лет до полного погашения ипотеки. <em>Независимо от горизонта проекции</em> — 25-летняя ипотека с оставшимися 18 годами закроется на 18-м году, а не в конце графика.</span></span>',
+      'prop.term.suffix': 'лет',
+      'prop.followup.label': 'На пенсии жильё',
+      'prop.followup.kept': 'оставлено',
+      'prop.followup.sold': 'продано',
+
+      'chart1.eyebrow': 'Рис.&nbsp;1 — Траектория капитала',
+      'chart1.aria': 'Прогноз роста',
+      'chart.years': 'лет',
+      'chart1.legend.nominal': 'Номинальная стоимость',
+      'chart1.legend.portfolio': 'Портфель',
+      'chart1.legend.equity': 'Капитал в жилье',
+      'chart1.legend.real': 'Реальная стоимость, в сегодняшних деньгах',
+      'chart1.legend.net-real': 'Чистая стоимость, реальная',
+      'chart1.legend.contributed': 'Сумма внесённого',
+
+      'prop.addendum': '<span class="prop-addendum-mark">·</span> Жильё достигает <span class="prop-addendum-val"><span class="ld-curr js-sym">€</span><span id="prop-value-end">336 910</span></span>, из которых <span class="prop-addendum-val"><span class="ld-curr js-sym">€</span><span id="prop-equity-end">336 910</span></span> — ваши. Кредитное плечо даёт <span class="prop-addendum-val"><span id="prop-roe-y1">21,50</span>%</span> в 1-й год; ипотека закрывается <span class="prop-addendum-val" id="prop-payoff">Год 28</span>.',
+
+      'part2.toggle': 'Показать пенсионный доход',
+      'hero2.eyebrow': '<span class="brk">·</span>&nbsp;&nbsp;<span id="ret-eyebrow-from">Из которых</span>, на&nbsp;<em id="ret-years-word">двадцать пять</em>&nbsp;лет&nbsp;&nbsp;<span class="brk">·</span>',
+      'hero2.unit.month': '/мес',
+      'hero2.caption': '…пассивный ежемесячный доход в сегодняшней покупательной способности, эквивалентный в начале пенсии <span class="pull-real"><span class="js-sym">€</span><span id="ret-income-nom">9 056</span><span class="unit-soft">/мес</span></span>.',
+
+      'ledger.annual-income': 'Годовой доход<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Годовой доход»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Устойчивый годовой доход в сегодняшних деньгах. Остаётся постоянным в реальном выражении — номинальная сумма растёт каждый год с инфляцией.</span></span>',
+      'ledger.effective-rate': 'Эффективная ставка<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Эффективная ставка»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Годовое изъятие как процент от стартового реального капитала. Выше ~4% обычно истощается быстрее, чем исторический «безопасный» порог на 30 лет.</span></span>',
+      'ledger.start': 'В начале пенсии<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «В начале пенсии»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Сколько именно евро/долларов вы изымете в первый месяц пенсии в будущих деньгах. Дальше растёт с инфляцией.</span></span>',
+      'ledger.start.suffix': '/мес',
+      'ledger.withdrawn': 'Сумма изъятий<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Пояснить «Сумма изъятий»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Общая номинальная сумма, изъятая за все годы пенсии. Намного больше стартового капитала — каждое следующее изъятие крупнее предыдущего.</span></span>',
+
+      'chart2.eyebrow': 'Рис.&nbsp;2 — Изъятие капитала',
+      'chart2.aria': 'Изъятие капитала',
+      'chart2.legend.nominal': 'Капитал, номинал',
+      'chart2.legend.real': 'Капитал, в сегодняшних деньгах',
+
+      'colophon.fonts': 'Набрано шрифтами <em>Fraunces</em> и <em>IBM Plex Mono</em>.',
+      'colophon.monthly': 'Расчёт ежемесячный.',
+      'colophon.disclaimer': 'Проекция — не гарантия.',
+
+      'chart.zero.today': 'Сегодня',
+      'chart.zero.retire': 'Начало пенсии',
+      'chart.x.accum': 'лет от сегодня',
+      'chart.x.retire': 'лет с начала пенсии',
+
+      'tip.year': 'Год',
+      'tip.networth': 'Чистая стоимость',
+      'tip.portfolio': 'Портфель',
+      'tip.equity': 'Капитал',
+      'tip.real': 'Реальная',
+      'tip.nominal': 'Номинал',
+      'tip.paidin': 'Внесено',
+
+      'hero2.from': 'Из которых',
+      'hero2.from.portfolio': 'Из вашего портфеля',
+      'hero2.from.portfolio-home': 'Из портфеля и жилья',
+
+      'prop.payoff.prefix': 'Год',
+      'prop.payoff.none': '—',
+    },
+  };
+
+  const t = (key) => {
+    const dict = LANG[state.language] || LANG.en;
+    return dict[key] ?? LANG.en[key] ?? key;
+  };
+
   function saveProperty() {
     try { localStorage.setItem(STORAGE_PROP, JSON.stringify(state.property)); } catch {}
   }
 
   const $ = (id) => document.getElementById(id);
   const sym = () => CUR_SYMBOLS[state.currency];
+  const numLocale = () => state.language === 'ru' ? 'ru-RU' : 'en-US';
 
-  const fmtAmt = (n) => Math.round(n).toLocaleString('en-US');
+  const fmtAmt = (n) => Math.round(n).toLocaleString(numLocale());
   const fmtAmtShort = (n) => {
     const s = sym();
     const abs = Math.abs(n);
-    if (abs >= 1_000_000) return s + (n / 1_000_000).toFixed(n >= 10_000_000 ? 0 : 1) + 'M';
+    const dec = (x, digits) => x.toFixed(digits).replace('.', state.language === 'ru' ? ',' : '.');
+    if (abs >= 1_000_000) return s + dec(n / 1_000_000, n >= 10_000_000 ? 0 : 1) + 'M';
     if (abs >= 1_000) return s + Math.round(n / 1_000) + 'k';
     return s + Math.round(n);
   };
-  const fmtMul = (n) => (Math.round(n * 100) / 100).toFixed(2);
-  const fmtPct2 = (n) => (Math.round(n * 100) / 100).toFixed(2);
+  const fmtMul = (n) => {
+    const v = (Math.round(n * 100) / 100).toFixed(2);
+    return state.language === 'ru' ? v.replace('.', ',') : v;
+  };
+  const fmtPct2 = (n) => {
+    const v = (Math.round(n * 100) / 100).toFixed(2);
+    return state.language === 'ru' ? v.replace('.', ',') : v;
+  };
   const parseNum = (s) => {
     if (typeof s !== 'string') return NaN;
     return parseFloat(s.replace(/[^\d.,-]/g, '').replace(/,/g, ''));
@@ -65,10 +279,16 @@
   };
 
   const YEAR_WORDS = {
-    5: 'five', 10: 'ten', 15: 'fifteen', 20: 'twenty', 25: 'twenty-five',
-    30: 'thirty', 35: 'thirty-five', 40: 'forty', 45: 'forty-five', 50: 'fifty',
+    en: {
+      5: 'five', 10: 'ten', 15: 'fifteen', 20: 'twenty', 25: 'twenty-five',
+      30: 'thirty', 35: 'thirty-five', 40: 'forty', 45: 'forty-five', 50: 'fifty',
+    },
+    ru: {
+      5: 'пять', 10: 'десять', 15: 'пятнадцать', 20: 'двадцать', 25: 'двадцать пять',
+      30: 'тридцать', 35: 'тридцать пять', 40: 'сорок', 45: 'сорок пять', 50: 'пятьдесят',
+    },
   };
-  const yearWord = (n) => YEAR_WORDS[n] || String(n);
+  const yearWord = (n) => (YEAR_WORDS[state.language] || YEAR_WORDS.en)[n] || String(n);
 
   // ─── projections ───
   function projectAccum() {
@@ -205,7 +425,7 @@
   // ─── chart factory ───
   const NS = 'http://www.w3.org/2000/svg';
 
-  function setupChart({ svgId, tipId, hatchId, zeroLabel, xCaption }) {
+  function setupChart({ svgId, tipId, hatchId, zeroLabelKey, xCaptionKey }) {
     const svg = $(svgId);
     const tip = $(tipId);
     const VB = { w: 800, h: 380 };
@@ -259,7 +479,7 @@
         y: VB.h - PAD.b + 32,
         'text-anchor': 'middle',
       });
-      xCap.textContent = xCaption;
+      xCap.textContent = t(xCaptionKey);
 
       // point arrays
       const nomPts = pts.map(p => ({ x: scaleX(p.year, xMax), y: scaleY(p.nominal, yMax) }));
@@ -361,18 +581,18 @@
       tip.style.left = tipX + 'px';
       tip.style.top = tipY + 'px';
 
-      const yearLabel = p.year === 0 ? zeroLabel : `Year ${p.year}`;
+      const yearLabel = p.year === 0 ? t(zeroLabelKey) : `${t('tip.year')} ${p.year}`;
       const cs = sym();
       const rows = [];
       if (last.withEquity) {
-        rows.push(`<div class="tip-row"><span>Net worth</span><b class="tip-n">${cs}${fmtAmt(p.nominal)}</b></div>`);
-        rows.push(`<div class="tip-row"><span>Portfolio</span><b>${cs}${fmtAmt(p.portfolio)}</b></div>`);
-        rows.push(`<div class="tip-row"><span>Equity</span><b class="tip-eq">${cs}${fmtAmt(p.equity)}</b></div>`);
-        rows.push(`<div class="tip-row"><span>Real</span><b class="tip-r">${cs}${fmtAmt(p.real)}</b></div>`);
+        rows.push(`<div class="tip-row"><span>${t('tip.networth')}</span><b class="tip-n">${cs}${fmtAmt(p.nominal)}</b></div>`);
+        rows.push(`<div class="tip-row"><span>${t('tip.portfolio')}</span><b>${cs}${fmtAmt(p.portfolio)}</b></div>`);
+        rows.push(`<div class="tip-row"><span>${t('tip.equity')}</span><b class="tip-eq">${cs}${fmtAmt(p.equity)}</b></div>`);
+        rows.push(`<div class="tip-row"><span>${t('tip.real')}</span><b class="tip-r">${cs}${fmtAmt(p.real)}</b></div>`);
       } else {
-        rows.push(`<div class="tip-row"><span>Nominal</span><b class="tip-n">${cs}${fmtAmt(p.nominal)}</b></div>`);
-        rows.push(`<div class="tip-row"><span>Real</span><b class="tip-r">${cs}${fmtAmt(p.real)}</b></div>`);
-        if (last.hasContrib) rows.push(`<div class="tip-row"><span>Paid in</span><b>${cs}${fmtAmt(p.contrib)}</b></div>`);
+        rows.push(`<div class="tip-row"><span>${t('tip.nominal')}</span><b class="tip-n">${cs}${fmtAmt(p.nominal)}</b></div>`);
+        rows.push(`<div class="tip-row"><span>${t('tip.real')}</span><b class="tip-r">${cs}${fmtAmt(p.real)}</b></div>`);
+        if (last.hasContrib) rows.push(`<div class="tip-row"><span>${t('tip.paidin')}</span><b>${cs}${fmtAmt(p.contrib)}</b></div>`);
       }
       tip.innerHTML = `<div class="tip-year">${yearLabel}</div>${rows.join('')}`;
       tip.hidden = false;
@@ -412,11 +632,11 @@
 
   const chartAccum = setupChart({
     svgId: 'chart', tipId: 'tip', hatchId: 'hatch-accum',
-    zeroLabel: 'Today', xCaption: 'years from now',
+    zeroLabelKey: 'chart.zero.today', xCaptionKey: 'chart.x.accum',
   });
   const chartRetire = setupChart({
     svgId: 'chart-2', tipId: 'tip-2', hatchId: 'hatch-retire',
-    zeroLabel: 'Retirement start', xCaption: 'years into retirement',
+    zeroLabelKey: 'chart.zero.retire', xCaptionKey: 'chart.x.retire',
   });
 
   // ─── render ───
@@ -497,8 +717,8 @@
       $('prop-equity-end').textContent = fmtAmt(propLast.equity);
       $('prop-roe-y1').textContent = fmtPct2(roeY1);
       const payoff = propResult.payoffMonth
-        ? `Yr ${Math.ceil(propResult.payoffMonth / 12)}`
-        : '—';
+        ? `${t('prop.payoff.prefix')} ${Math.ceil(propResult.payoffMonth / 12)}`
+        : t('prop.payoff.none');
       $('prop-payoff').textContent = payoff;
 
       $('prop-ledger').hidden = false;
@@ -510,7 +730,7 @@
       document.querySelector('.chart-foot .lg-sep-equity').hidden = false;
       // hero 2 eyebrow — depends on whether the home is being sold at retirement
       $('ret-eyebrow-from').textContent =
-        state.property.fate === 'sold' ? 'From portfolio and home' : 'From your portfolio';
+        state.property.fate === 'sold' ? t('hero2.from.portfolio-home') : t('hero2.from.portfolio');
     } else {
       $('prop-ledger').hidden = true;
       $('prop-ledger-rule').hidden = true;
@@ -518,7 +738,7 @@
       document.querySelectorAll('.chart-foot .lg-label-prop').forEach(el => el.hidden = true);
       document.querySelector('.chart-foot .lg-equity').hidden = true;
       document.querySelector('.chart-foot .lg-sep-equity').hidden = true;
-      $('ret-eyebrow-from').textContent = 'From which';
+      $('ret-eyebrow-from').textContent = t('hero2.from');
     }
 
     // ─── retirement drawdown pot ───
@@ -659,6 +879,54 @@
   wirePercent('prop-rate', 'prop-rate-num', v => { state.property.mortgageRate = v; saveProperty(); });
   wireYears('prop-term', 'prop-term-num', v => { state.property.termRemaining = v; saveProperty(); });
 
+  // ─── language toggle ───
+  function applyTranslations() {
+    document.documentElement.lang = state.language;
+    document.title = t('page.title');
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n;
+      const v = t(key);
+      if (v != null) el.innerHTML = v;
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+      const key = el.dataset.i18nAria;
+      const v = t(key);
+      if (v != null) el.setAttribute('aria-label', v);
+    });
+  }
+  function applyLanguageToggle() {
+    document.querySelectorAll('.lang-opt').forEach(b => {
+      b.classList.toggle('active', b.dataset.lang === state.language);
+    });
+  }
+  function reformatInputs() {
+    // Money fields use locale grouping; percent/year fields are locale-agnostic
+    [['principal', 'principal-num'], ['monthly', 'monthly-num'],
+     ['prop-value', 'prop-value-num'], ['prop-mortgage', 'prop-mortgage-num']]
+      .forEach(([r, n]) => {
+        const range = $(r), num = $(n);
+        if (range && num) num.value = fmtAmt(parseFloat(range.value));
+      });
+  }
+  document.querySelectorAll('.lang-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.language === btn.dataset.lang) return;
+      state.language = btn.dataset.lang;
+      try { localStorage.setItem(STORAGE_LANG, state.language); } catch {}
+      applyTranslations();
+      // data-i18n replacement wipes innerHTML on several elements whose state
+      // is layered on top — re-apply those state-dependent labels.
+      applyPropertyToggle();
+      applyFateToggle();
+      applyCurrencySymbol();
+      applyLanguageToggle();
+      reformatInputs();
+      render();
+    });
+  });
+  applyTranslations();
+  applyLanguageToggle();
+
   // ─── currency toggle ───
   function applyCurrencySymbol() {
     const s = sym();
@@ -723,7 +991,7 @@
     btn.setAttribute('aria-expanded', String(on));
     btn.querySelector('.prop-disclosure-sign').textContent = on ? '−' : '+';
     btn.querySelector('.prop-disclosure-text').textContent =
-      on ? 'Property asset · included' : 'Include a property asset';
+      on ? t('prop.toggle.on') : t('prop.toggle.off');
     $('prop-inputs').hidden = !on;
     $('prop-followup').hidden = !on;
   }
