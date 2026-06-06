@@ -21,10 +21,9 @@
       <span class="mh-left">Vol.&nbsp;I &nbsp;·&nbsp; N°&nbsp;01</span>
       <span class="mh-center">— The Compound —</span>
       <span class="mh-right">
-        <span class="mh-aside">denominated in</span>
         <span class="cur-toggle" role="group" aria-label="Currency">
           <button class="cur-opt active" data-cur="EUR" aria-label="Euros">€</button>
-          <span class="cur-divider" aria-hidden="true">/</span>
+          <span class="cur-divider" aria-hidden="true">·</span>
           <button class="cur-opt" data-cur="USD" aria-label="Dollars">$</button>
         </span>
       </span>
@@ -38,7 +37,7 @@
         <span class="curr js-sym">€</span><span id="total-nominal">1,545,130</span>
       </h1>
       <p class="caption" id="caption-portfolio">
-        …being a projection of your savings, compounded monthly, amounting in today's purchasing power to <span class="pull-real" id="total-real">€853,021</span>.
+        …a projection of your savings, amounting in today's purchasing power to <span class="pull-real" id="total-real">€853,021</span>.
       </p>
       <p class="caption" id="caption-net" hidden>
         …being your portfolio of <span class="pull-soft"><span class="js-sym">€</span><span id="portfolio-nom">1,545,130</span></span> plus property equity of <span class="pull-soft"><span class="js-sym">€</span><span id="equity-nom">285,000</span></span>, amounting in today's purchasing power to <span class="pull-real" id="total-real-net">€1,012,000</span>.
@@ -71,12 +70,11 @@
     <hr class="rule" />
 
     <section class="dials">
-      <span class="dials-eyebrow">— Adjust at will —</span>
-      <div class="ctrl-grid ctrl-grid-5">
+      <div class="ctrl-grid ctrl-grid-position">
 
-        <div class="ctrl">
+        <div class="ctrl ctrl-primary">
           <div class="ctrl-head">
-            <label for="principal">i. Capital at hand<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Capital at hand"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Your starting lump sum — any liquid savings or investments you'll grow today. Future contributions go in "Monthly addition" below.</span></span></label>
+            <label for="principal">Capital at hand<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Capital at hand"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Your starting lump sum — any liquid savings or investments you'll grow today. Future contributions go in "Monthly addition" beside.</span></span></label>
             <div class="num-field">
               <span class="prefix js-sym">€</span>
               <input type="text" inputmode="numeric" id="principal-num" value="25,000" />
@@ -85,12 +83,11 @@
           <div class="slider-rail">
             <input type="range" id="principal" min="0" max="500000" step="500" value="25000" />
           </div>
-          <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>500,000</span></div>
         </div>
 
-        <div class="ctrl">
+        <div class="ctrl ctrl-primary">
           <div class="ctrl-head">
-            <label for="monthly">ii. Monthly addition<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Monthly addition"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Money you'll add each month, <em>in today's money</em>. Each year the deposit grows with inflation plus the <em>Contribution growth</em> rate, so the figure you set holds its purchasing power over the horizon.</span></span></label>
+            <label for="monthly">Monthly addition<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Monthly addition"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Money you'll add each month, <em>in today's money</em>. Each year the deposit grows with inflation plus the <em>Contribution growth</em> rate, so the figure you set holds its purchasing power over the horizon.</span></span></label>
             <div class="num-field">
               <span class="prefix js-sym">€</span>
               <input type="text" inputmode="numeric" id="monthly-num" value="500" />
@@ -99,51 +96,54 @@
           <div class="slider-rail">
             <input type="range" id="monthly" min="0" max="5000" step="50" value="500" />
           </div>
-          <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>5,000</span></div>
         </div>
 
-        <div class="ctrl">
-          <div class="ctrl-head">
-            <label for="contrib-growth">iii. Contribution growth<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Contribution growth"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How much your contributions grow each year <em>above inflation</em>. <em>0%</em> holds them steady in today's money; <em>1–2%</em> reflects typical real wage growth over a career; negative figures model a step down in income.</span></span></label>
-            <div class="num-field">
-              <input type="text" inputmode="decimal" id="contrib-growth-num" value="1.0" />
-              <span class="suffix">%</span>
+      </div>
+
+      <div class="assumptions">
+        <span class="assumptions-eyebrow">— Assumptions —</span>
+        <div class="ctrl-grid ctrl-grid-assumptions">
+
+          <div class="ctrl ctrl-compact">
+            <div class="ctrl-head">
+              <label for="return">Annual return<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Annual return"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Expected nominal annual return on invested capital, before inflation. Long-run global stocks sit near <em>7%</em>; balanced portfolios <em>5–6%</em>; bonds <em>3–4%</em>.</span></span></label>
+              <div class="num-field num-field-sm">
+                <input type="text" inputmode="decimal" id="return-num" value="7.0" />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+            <div class="slider-rail slider-rail-sm">
+              <input type="range" id="return" min="0" max="15" step="0.1" value="7" />
             </div>
           </div>
-          <div class="slider-rail">
-            <input type="range" id="contrib-growth" min="-2" max="5" step="0.1" value="1" />
-          </div>
-          <div class="range-marks"><span>−2%</span><span>5%</span></div>
-        </div>
 
-        <div class="ctrl">
-          <div class="ctrl-head">
-            <label for="return">iv. Annual return<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Annual return"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Expected nominal annual return on invested capital, before inflation. Long-run global stocks sit near <em>7%</em>; balanced portfolios <em>5–6%</em>; bonds <em>3–4%</em>.</span></span></label>
-            <div class="num-field">
-              <input type="text" inputmode="decimal" id="return-num" value="7.0" />
-              <span class="suffix">%</span>
+          <div class="ctrl ctrl-compact">
+            <div class="ctrl-head">
+              <label for="inflation">Inflation<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Inflation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How fast prices rise each year, eroding purchasing power. The ECB targets <em>2%</em>; treating it as constant over decades is a simplification.</span></span></label>
+              <div class="num-field num-field-sm">
+                <input type="text" inputmode="decimal" id="inflation-num" value="2.0" />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+            <div class="slider-rail slider-rail-sm">
+              <input type="range" id="inflation" min="0" max="10" step="0.1" value="2" />
             </div>
           </div>
-          <div class="slider-rail">
-            <input type="range" id="return" min="0" max="15" step="0.1" value="7" />
-          </div>
-          <div class="range-marks"><span>0%</span><span>15%</span></div>
-        </div>
 
-        <div class="ctrl">
-          <div class="ctrl-head">
-            <label for="inflation">v. Inflation<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Inflation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How fast prices rise each year, eroding purchasing power. The ECB targets <em>2%</em>; treating it as constant over decades is a simplification.</span></span></label>
-            <div class="num-field">
-              <input type="text" inputmode="decimal" id="inflation-num" value="2.0" />
-              <span class="suffix">%</span>
+          <div class="ctrl ctrl-compact">
+            <div class="ctrl-head">
+              <label for="contrib-growth">Contribution growth<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Contribution growth"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How much your contributions grow each year <em>above inflation</em>. <em>0%</em> holds them steady in today's money; <em>1–2%</em> reflects typical real wage growth over a career; negative figures model a step down in income.</span></span></label>
+              <div class="num-field num-field-sm">
+                <input type="text" inputmode="decimal" id="contrib-growth-num" value="1.0" />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+            <div class="slider-rail slider-rail-sm">
+              <input type="range" id="contrib-growth" min="-2" max="5" step="0.1" value="1" />
             </div>
           </div>
-          <div class="slider-rail">
-            <input type="range" id="inflation" min="0" max="10" step="0.1" value="2" />
-          </div>
-          <div class="range-marks"><span>0%</span><span>10%</span></div>
-        </div>
 
+        </div>
       </div>
     </section>
 
@@ -160,98 +160,104 @@
       <hr class="rule" />
     </div>
 
-    <div class="ctrl-grid ctrl-grid-5 prop-inputs" id="prop-inputs" hidden>
+    <div class="prop-section" id="prop-inputs" hidden>
+      <div class="ctrl-grid ctrl-grid-position">
 
-      <div class="ctrl">
-        <div class="ctrl-head">
-          <label for="prop-value">Market value<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Market value"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What you could sell the property for today. <strong>Appreciation applies to this full value</strong> — not just your equity. Capturing that is the whole point of modelling the asset.</span></span></label>
-          <div class="num-field">
-            <span class="prefix js-sym">€</span>
-            <input type="text" inputmode="numeric" id="prop-value-num" value="280,000" />
+        <div class="ctrl ctrl-primary">
+          <div class="ctrl-head">
+            <label for="prop-value">Market value<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Market value"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What you could sell the property for today. <strong>Appreciation applies to this full value</strong> — not just your equity. Capturing that is the whole point of modelling the asset.</span></span></label>
+            <div class="num-field">
+              <span class="prefix js-sym">€</span>
+              <input type="text" inputmode="numeric" id="prop-value-num" value="280,000" />
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="prop-value" min="0" max="2000000" step="1000" value="280000" />
           </div>
         </div>
-        <div class="slider-rail">
-          <input type="range" id="prop-value" min="0" max="2000000" step="1000" value="280000" />
-        </div>
-        <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>2M</span></div>
-      </div>
 
-      <div class="ctrl">
-        <div class="ctrl-head">
-          <label for="prop-appreciation">Appreciation<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Appreciation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual rate the property's value grows. <em>Distinct from your portfolio return</em> — long-run residential averages sit near <em>3–4%</em> nominal. Can be set negative to model declines.</span></span></label>
-          <div class="num-field">
-            <input type="text" inputmode="decimal" id="prop-appreciation-num" value="4.0" />
-            <span class="suffix">%</span>
+        <div class="ctrl ctrl-primary">
+          <div class="ctrl-head">
+            <label for="prop-mortgage">Mortgage balance<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Mortgage balance"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What you currently still owe. Amortises on a standard fixed-payment schedule over the years remaining — interest decreases, principal increases, balance falls to zero at term end.</span></span></label>
+            <div class="num-field">
+              <span class="prefix js-sym">€</span>
+              <input type="text" inputmode="numeric" id="prop-mortgage-num" value="170,000" />
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="prop-mortgage" min="0" max="1500000" step="1000" value="170000" />
           </div>
         </div>
-        <div class="slider-rail">
-          <input type="range" id="prop-appreciation" min="-5" max="15" step="0.1" value="4" />
-        </div>
-        <div class="range-marks"><span>−5%</span><span>15%</span></div>
+
       </div>
 
-      <div class="ctrl">
-        <div class="ctrl-head">
-          <label for="prop-mortgage">Mortgage balance<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Mortgage balance"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What you currently still owe. Amortises on a standard fixed-payment schedule over the years remaining — interest decreases, principal increases, balance falls to zero at term end.</span></span></label>
-          <div class="num-field">
-            <span class="prefix js-sym">€</span>
-            <input type="text" inputmode="numeric" id="prop-mortgage-num" value="170,000" />
+      <div class="assumptions assumptions-prop">
+        <div class="ctrl-grid ctrl-grid-assumptions">
+
+          <div class="ctrl ctrl-compact">
+            <div class="ctrl-head">
+              <label for="prop-appreciation">Appreciation<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Appreciation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual rate the property's value grows. <em>Distinct from your portfolio return</em> — long-run residential averages sit near <em>3–4%</em> nominal. Can be set negative to model declines.</span></span></label>
+              <div class="num-field num-field-sm">
+                <input type="text" inputmode="decimal" id="prop-appreciation-num" value="4.0" />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+            <div class="slider-rail slider-rail-sm">
+              <input type="range" id="prop-appreciation" min="-5" max="15" step="0.1" value="4" />
+            </div>
           </div>
-        </div>
-        <div class="slider-rail">
-          <input type="range" id="prop-mortgage" min="0" max="1500000" step="1000" value="170000" />
-        </div>
-        <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>1.5M</span></div>
-      </div>
 
-      <div class="ctrl">
-        <div class="ctrl-head">
-          <label for="prop-rate">Mortgage rate<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Mortgage rate"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual interest rate on your mortgage. Assumed fixed for the duration — variable-rate mortgages are a v2 concern.</span></span></label>
-          <div class="num-field">
-            <input type="text" inputmode="decimal" id="prop-rate-num" value="3.0" />
-            <span class="suffix">%</span>
+          <div class="ctrl ctrl-compact">
+            <div class="ctrl-head">
+              <label for="prop-rate">Mortgage rate<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Mortgage rate"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual interest rate on your mortgage. Assumed fixed for the duration — variable-rate mortgages are a v2 concern.</span></span></label>
+              <div class="num-field num-field-sm">
+                <input type="text" inputmode="decimal" id="prop-rate-num" value="3.0" />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+            <div class="slider-rail slider-rail-sm">
+              <input type="range" id="prop-rate" min="0" max="12" step="0.05" value="3" />
+            </div>
           </div>
-        </div>
-        <div class="slider-rail">
-          <input type="range" id="prop-rate" min="0" max="12" step="0.05" value="3" />
-        </div>
-        <div class="range-marks"><span>0%</span><span>12%</span></div>
-      </div>
 
-      <div class="ctrl">
-        <div class="ctrl-head">
-          <label for="prop-term">Years remaining<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Years remaining"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Years left until the mortgage is fully paid off. <em>Independent of the projection horizon</em> — a 25-year mortgage with 18 years left clears at year 18, not when the chart ends.</span></span></label>
-          <div class="num-field">
-            <input type="text" inputmode="numeric" id="prop-term-num" value="20" />
-            <span class="suffix">yr</span>
+          <div class="ctrl ctrl-compact">
+            <div class="ctrl-head">
+              <label for="prop-term">Years remaining<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Years remaining"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Years left until the mortgage is fully paid off. <em>Independent of the projection horizon</em> — a 25-year mortgage with 18 years left clears at year 18, not when the chart ends.</span></span></label>
+              <div class="num-field num-field-sm">
+                <input type="text" inputmode="numeric" id="prop-term-num" value="20" />
+                <span class="suffix">yr</span>
+              </div>
+            </div>
+            <div class="slider-rail slider-rail-sm">
+              <input type="range" id="prop-term" min="0" max="40" step="1" value="20" />
+            </div>
           </div>
+
         </div>
-        <div class="slider-rail">
-          <input type="range" id="prop-term" min="0" max="40" step="1" value="20" />
+
+        <div class="prop-followup" id="prop-followup">
+          <span class="prop-followup-label">At retirement, the home is</span>
+          <span class="prop-fate-toggle" role="group" aria-label="Property fate at retirement">
+            <button class="prop-fate-opt active" data-fate="kept">kept</button>
+            <span class="prop-divider-sep">·</span>
+            <button class="prop-fate-opt" data-fate="sold">sold</button>
+          </span>
         </div>
-        <div class="range-marks"><span>0</span><span>40&nbsp;yr</span></div>
       </div>
-
-    </div>
-
-    <div class="prop-followup" id="prop-followup" hidden>
-      <span class="prop-followup-label">At retirement, the home is</span>
-      <span class="prop-fate-toggle" role="group" aria-label="Property fate at retirement">
-        <button class="prop-fate-opt active" data-fate="kept">kept</button>
-        <span class="prop-divider-sep">·</span>
-        <button class="prop-fate-opt" data-fate="sold">sold</button>
-      </span>
-      <span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain home fate at retirement"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span><strong>Kept</strong> — the home and its equity stay yours through retirement, passed on as legacy. Fig. 2 and the monthly income ignore the property.<br><br><strong>Sold</strong> — the home is liquidated at retirement's start; its equity is added to the portfolio pot. Fig. 2 starts from the larger combined wealth and the monthly income grows accordingly.</span></span>
     </div>
 
     <section class="chart-panel">
       <header class="chart-head">
         <span class="chart-eyebrow">Fig.&nbsp;1 — Trajectory of Capital</span>
-        <nav class="horizon" data-horizon="accum" aria-label="Accumulation years">
-          <button class="h-btn" data-years="10"><span class="num">10</span><span class="lbl">years</span></button>
-          <button class="h-btn" data-years="20"><span class="num">20</span><span class="lbl">years</span></button>
-          <button class="h-btn active" data-years="30"><span class="num">30</span><span class="lbl">years</span></button>
-          <button class="h-btn" data-years="40"><span class="num">40</span><span class="lbl">years</span></button>
+        <nav class="horizon horizon-inline" data-horizon="accum" aria-label="Accumulation years">
+          <button class="h-btn" data-years="10">10</button>
+          <span class="h-sep">·</span>
+          <button class="h-btn" data-years="20">20</button>
+          <span class="h-sep">·</span>
+          <button class="h-btn active" data-years="30">30</button>
+          <span class="h-sep">·</span>
+          <button class="h-btn" data-years="40">40</button>
+          <span class="h-suffix">years</span>
         </nav>
       </header>
       <div class="chart-wrap">
@@ -269,28 +275,15 @@
       </p>
     </section>
 
-    <!-- Property ledger (shown when property is enabled) -->
-    <hr class="rule" id="prop-ledger-rule" hidden />
-    <section class="ledger ledger-property" id="prop-ledger" hidden>
-      <dl>
-        <div>
-          <dt>Property Value<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Property Value"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Projected market value at the end of the horizon, after compound appreciation. The mortgage is excluded — this is the asset alone.</span></span></dt>
-          <dd><span class="ld-curr js-sym">€</span><span id="prop-value-end">336,910</span></dd>
-        </div>
-        <div>
-          <dt>Home Equity<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Home Equity"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Property value minus the remaining mortgage at horizon end. What you'd net selling, before transaction costs.</span></span></dt>
-          <dd><span class="ld-curr js-sym">€</span><span id="prop-equity-end">336,910</span></dd>
-        </div>
-        <div>
-          <dt>Y<sub>1</sub> Equity Return<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Year 1 Equity Return"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>First-year change in equity as a percentage of starting equity. Usually much higher than the raw appreciation rate — that's leverage made visible.</span></span></dt>
-          <dd><span id="prop-roe-y1">21.50</span><span class="ld-suffix">%</span></dd>
-        </div>
-        <div>
-          <dt>Mortgage Cleared<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Mortgage Cleared"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>The year your mortgage is fully paid off. After that, equity equals property value and amortisation no longer contributes to growth.</span></span></dt>
-          <dd><span id="prop-payoff">Yr 28</span></dd>
-        </div>
-      </dl>
-    </section>
+    <!-- Property addendum (inline italic line beneath Fig. 1) -->
+    <p class="prop-addendum" id="prop-ledger" hidden>
+      <span class="prop-addendum-mark">·</span>
+      Property reaches <span class="prop-addendum-val"><span class="ld-curr js-sym">€</span><span id="prop-value-end">336,910</span></span>,
+      of which <span class="prop-addendum-val"><span class="ld-curr js-sym">€</span><span id="prop-equity-end">336,910</span></span> is yours.
+      Leverage delivers <span class="prop-addendum-val"><span id="prop-roe-y1">21.50</span>%</span> in Year 1;
+      the mortgage clears <span class="prop-addendum-val" id="prop-payoff">Yr 28</span>.
+    </p>
+    <span id="prop-ledger-rule" hidden></span>
 
     <!-- Editorial divider — Part II disclosure -->
     <div class="part-break">
@@ -348,11 +341,15 @@
     <section class="chart-panel">
       <header class="chart-head">
         <span class="chart-eyebrow">Fig.&nbsp;2 — Drawdown of Capital</span>
-        <nav class="horizon" data-horizon="retire" aria-label="Retirement years">
-          <button class="h-btn" data-years="20"><span class="num">20</span><span class="lbl">years</span></button>
-          <button class="h-btn active" data-years="25"><span class="num">25</span><span class="lbl">years</span></button>
-          <button class="h-btn" data-years="30"><span class="num">30</span><span class="lbl">years</span></button>
-          <button class="h-btn" data-years="35"><span class="num">35</span><span class="lbl">years</span></button>
+        <nav class="horizon horizon-inline" data-horizon="retire" aria-label="Retirement years">
+          <button class="h-btn" data-years="20">20</button>
+          <span class="h-sep">·</span>
+          <button class="h-btn active" data-years="25">25</button>
+          <span class="h-sep">·</span>
+          <button class="h-btn" data-years="30">30</button>
+          <span class="h-sep">·</span>
+          <button class="h-btn" data-years="35">35</button>
+          <span class="h-suffix">years</span>
         </nav>
       </header>
       <div class="chart-wrap">

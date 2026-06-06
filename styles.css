@@ -120,16 +120,10 @@ body {
   justify-content: flex-end;
   gap: 10px;
 }
-.mh-aside {
-  /* inherits monospace small-caps from .masthead */
-}
 .cur-toggle {
   display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 8px 4px;
-  border: 1px solid var(--rule);
-  background: rgba(255,255,255,0.015);
+  align-items: baseline;
+  gap: 5px;
 }
 .cur-opt {
   appearance: none;
@@ -139,7 +133,7 @@ body {
   cursor: pointer;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1;
   color: var(--ink-faint);
   font-variation-settings: "opsz" 24, "SOFT" 80;
@@ -152,7 +146,7 @@ body {
 .cur-divider {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--ink-faint);
   line-height: 1;
 }
@@ -407,51 +401,48 @@ body {
   font-variation-settings: "opsz" 24, "SOFT" 60;
 }
 
-.horizon {
+/* Horizon — typographic inline picker */
+.horizon-inline {
   display: inline-flex;
-  border: 1px solid var(--rule);
-  border-radius: 1px;
-  background: rgba(255,255,255,0.015);
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--serif);
+  font-variation-settings: "opsz" 24, "SOFT" 60;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-soft);
 }
-.h-btn {
+.horizon-inline .h-btn {
   appearance: none;
   background: transparent;
   border: 0;
-  border-right: 1px solid var(--rule-soft);
-  color: var(--ink-dim);
-  font: inherit;
-  padding: 9px 16px 8px;
+  padding: 2px 2px 3px;
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-  transition: color 0.22s ease, background 0.22s ease;
-  min-width: 64px;
-}
-.h-btn:last-child { border-right: 0; }
-.h-btn .num {
-  font-family: var(--serif);
-  font-size: 20px;
-  letter-spacing: 0;
-  line-height: 1;
-  font-variation-settings: "opsz" 36, "SOFT" 30;
-  font-variant-numeric: lining-nums tabular-nums;
-}
-.h-btn .lbl {
-  font-family: var(--mono);
-  font-size: 8.5px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
+  font: inherit;
+  font-style: italic;
   color: var(--ink-faint);
+  letter-spacing: 0;
+  font-variant-numeric: lining-nums tabular-nums;
+  transition: color 0.18s ease;
 }
-.h-btn:hover { color: var(--ink); background: rgba(255,255,255,0.025); }
-.h-btn:hover .lbl { color: var(--ink-dim); }
-.h-btn.active {
+.horizon-inline .h-btn:hover { color: var(--ink-soft); }
+.horizon-inline .h-btn.active {
   color: var(--brass);
-  background: rgba(212, 166, 73, 0.08);
+  font-variation-settings: "opsz" 24, "SOFT" 30;
 }
-.h-btn.active .lbl { color: var(--brass-deep); }
+.horizon-inline .h-sep {
+  color: var(--ink-faint);
+  font-style: italic;
+  font-size: 14px;
+}
+.horizon-inline .h-suffix {
+  font-style: italic;
+  color: var(--ink-soft);
+  margin-left: 6px;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  font-variation-settings: "opsz" 18, "SOFT" 80;
+}
 
 .chart-wrap {
   position: relative;
@@ -546,23 +537,40 @@ body {
 .tip-n { color: var(--brass); }
 .tip-r { color: var(--terra); }
 
-/* ─── dials (compact input strip above Fig. 1) ─── */
+/* ─── dials (input strip above Fig. 1) ─── */
 .dials {
-  padding: 14px 0 6px;
-  text-align: center;
-}
-.dials-eyebrow {
-  display: inline-block;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  color: var(--ink-soft);
-  font-variation-settings: "opsz" 18, "SOFT" 80;
-  margin: 0 0 26px;
+  padding: 18px 0 6px;
 }
 .dials .ctrl-grid {
   text-align: left;
+}
+
+/* ─── assumptions — quieter rate strip beneath the primary dials ─── */
+.assumptions {
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule-soft);
+  position: relative;
+}
+.assumptions-eyebrow {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-block;
+  padding: 0 14px;
+  background: var(--paper);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+  font-variation-settings: "opsz" 18, "SOFT" 80;
+}
+.assumptions-prop {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--rule-soft);
 }
 
 /* ─── controls ─── */
@@ -594,14 +602,71 @@ body {
   column-gap: 32px;
   row-gap: 36px;
 }
-.ctrl-grid-5 {
-  grid-template-columns: repeat(5, 1fr);
-  column-gap: 16px;
+.ctrl-grid-position {
+  grid-template-columns: 1fr 1fr;
+  column-gap: 80px;
+  row-gap: 36px;
+}
+.ctrl-grid-assumptions {
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 48px;
+  row-gap: 24px;
 }
 @media (max-width: 1080px) {
   .ctrl-grid { grid-template-columns: repeat(2, 1fr); column-gap: 48px; }
-  .ctrl-grid-5 { grid-template-columns: repeat(2, 1fr); column-gap: 48px; }
+  .ctrl-grid-position { column-gap: 48px; }
+  .ctrl-grid-assumptions { column-gap: 32px; }
 }
+@media (max-width: 760px) {
+  .ctrl-grid-position { grid-template-columns: 1fr; }
+  .ctrl-grid-assumptions { grid-template-columns: 1fr; }
+}
+
+/* ─── ctrl tiers ─── */
+.ctrl-primary label {
+  font-size: 17px;
+  color: var(--ink);
+}
+.ctrl-primary .num-field input {
+  font-size: 24px;
+}
+.ctrl-compact .ctrl-head {
+  margin-bottom: 10px;
+  gap: 8px;
+}
+.ctrl-compact label {
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-variation-settings: "opsz" 18, "SOFT" 80;
+}
+.num-field-sm {
+  padding: 1px 2px 3px;
+}
+.num-field-sm input {
+  font-size: 15px;
+  width: 4.5ch;
+  font-weight: 400;
+}
+.num-field-sm .prefix,
+.num-field-sm .suffix {
+  font-size: 12px;
+}
+.slider-rail-sm {
+  padding: 4px 0 2px;
+}
+.slider-rail-sm input[type="range"] {
+  height: 18px;
+}
+.slider-rail-sm input[type="range"]::-webkit-slider-thumb {
+  width: 10px; height: 10px;
+  margin-top: -5px;
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 4px var(--brass);
+}
+.slider-rail-sm input[type="range"]::-moz-range-thumb {
+  width: 10px; height: 10px;
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 4px var(--brass);
+}
+.slider-rail-sm::before { display: none; }
 
 /* ─── property disclosure row ─── */
 .prop-toggle-row {
@@ -659,7 +724,7 @@ body {
   font-style: italic;
   font-size: 13px;
 }
-.prop-inputs {
+.prop-section {
   margin-top: 8px;
   margin-bottom: 4px;
   animation: prop-fade-in 0.32s ease both;
@@ -669,29 +734,60 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* sub-toggle: what happens to the home at retirement */
-.prop-followup {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin: 22px 0 24px;
+/* ─── property addendum — inline italic line beneath Fig. 1 ─── */
+.prop-addendum {
+  margin: 28px auto 0;
+  max-width: 60ch;
+  text-align: center;
   font-family: var(--serif);
   font-style: italic;
   font-size: 14px;
-  color: var(--ink-soft);
+  line-height: 1.65;
+  color: var(--ink-dim);
   font-variation-settings: "opsz" 18, "SOFT" 80;
-  animation: prop-fade-in 0.32s ease both;
+  letter-spacing: 0.005em;
+}
+.prop-addendum-mark {
+  color: var(--olive);
+  margin-right: 8px;
+  font-style: normal;
+}
+.prop-addendum-val {
+  color: var(--ink-soft);
+  font-style: normal;
+  font-weight: 500;
+  white-space: nowrap;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-variation-settings: "opsz" 18, "SOFT" 40;
+}
+.prop-addendum-val .ld-curr {
+  font-style: italic;
+  color: var(--ink-faint);
+  font-weight: 400;
+  margin-right: 1px;
+  font-variation-settings: "opsz" 24, "SOFT" 100;
+}
+
+/* sub-toggle: what happens to the home at retirement */
+.prop-followup {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  margin: 22px 0 4px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13.5px;
+  color: var(--ink-dim);
+  font-variation-settings: "opsz" 18, "SOFT" 80;
 }
 .prop-followup-label {
-  color: var(--ink-soft);
+  color: var(--ink-dim);
 }
 .prop-fate-toggle {
   display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 2px 10px 3px;
-  border: 1px solid var(--rule-soft);
+  align-items: baseline;
+  gap: 6px;
 }
 .prop-fate-opt {
   appearance: none;
@@ -744,6 +840,7 @@ body {
 /* sized down in label-context (labels are larger than dt) */
 .ctrl label .help-mark,
 .prop-label .help-mark { font-size: 12px; }
+.ctrl-compact label .help-mark { font-size: 10px; }
 .help-mark:hover,
 .help-mark:focus-visible,
 .help-anchor.is-open .help-mark {
@@ -996,16 +1093,6 @@ input[type="range"]::-moz-range-thumb {
   opacity: 0.7;
 }
 
-.range-marks {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 4px;
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
 
 /* ─── colophon ─── */
 .colophon {
