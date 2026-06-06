@@ -18,8 +18,8 @@
   })();
 
   const state = {
-    principal: 10000,
-    monthly: 1200,
+    principal: 25000,
+    monthly: 500,
     annualReturn: 0.07,
     inflation: 0.02,
     years: 30,
@@ -28,11 +28,11 @@
     partTwoVisible: savedPart2,
     property: {
       enabled: savedProp?.enabled ?? false,
-      value: savedProp?.value ?? 225000,
+      value: savedProp?.value ?? 280000,
       appreciation: savedProp?.appreciation ?? 0.04,
-      mortgageBalance: savedProp?.mortgageBalance ?? 140000,
-      mortgageRate: savedProp?.mortgageRate ?? 0.04,
-      termRemaining: savedProp?.termRemaining ?? 28,
+      mortgageBalance: savedProp?.mortgageBalance ?? 170000,
+      mortgageRate: savedProp?.mortgageRate ?? 0.03,
+      termRemaining: savedProp?.termRemaining ?? 20,
       fate: savedProp?.fate ?? 'kept', // 'kept' or 'sold' at retirement
     },
   };
