@@ -660,8 +660,6 @@ body {
   color: var(--ink-soft);
   font-variation-settings: "opsz" 18, "SOFT" 80;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .num-field-sm {
   padding: 0 2px 1px;
