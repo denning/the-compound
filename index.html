@@ -133,7 +133,102 @@
       </div>
     </section>
 
-    <hr class="rule" />
+    <!-- Property — an optional disclosure -->
+    <div class="prop-toggle-row">
+      <hr class="rule" />
+      <span class="prop-toggle-wrap">
+        <button class="prop-disclosure" type="button" data-state="off" aria-expanded="false" aria-controls="prop-inputs">
+          <span class="prop-disclosure-sign" aria-hidden="true">+</span>
+          <span class="prop-disclosure-text">Include a property asset</span>
+        </button>
+        <span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Property asset"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Whether to include a mortgaged appreciating asset (typically a home). <strong>Excluded</strong>: portfolio-only, default. <strong>Included</strong>: adds a stacked equity band to the chart, a property ledger, and shows how leverage compounds. Property equity is illiquid — it grows net worth but doesn't fund monthly income.</span></span>
+      </span>
+      <hr class="rule" />
+    </div>
+
+    <div class="ctrl-grid ctrl-grid-5 prop-inputs" id="prop-inputs" hidden>
+
+      <div class="ctrl">
+        <div class="ctrl-head">
+          <label for="prop-value">Market value<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Market value"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What you could sell the property for today. <strong>Appreciation applies to this full value</strong> — not just your equity. Capturing that is the whole point of modelling the asset.</span></span></label>
+          <div class="num-field">
+            <span class="prefix js-sym">€</span>
+            <input type="text" inputmode="numeric" id="prop-value-num" value="225,000" />
+          </div>
+        </div>
+        <div class="slider-rail">
+          <input type="range" id="prop-value" min="0" max="2000000" step="1000" value="225000" />
+        </div>
+        <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>2M</span></div>
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-head">
+          <label for="prop-appreciation">Appreciation<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Appreciation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual rate the property's value grows. <em>Distinct from your portfolio return</em> — long-run residential averages sit near <em>3–4%</em> nominal. Can be set negative to model declines.</span></span></label>
+          <div class="num-field">
+            <input type="text" inputmode="decimal" id="prop-appreciation-num" value="4.0" />
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="slider-rail">
+          <input type="range" id="prop-appreciation" min="-5" max="15" step="0.1" value="4" />
+        </div>
+        <div class="range-marks"><span>−5%</span><span>15%</span></div>
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-head">
+          <label for="prop-mortgage">Mortgage balance<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Mortgage balance"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What you currently still owe. Amortises on a standard fixed-payment schedule over the years remaining — interest decreases, principal increases, balance falls to zero at term end.</span></span></label>
+          <div class="num-field">
+            <span class="prefix js-sym">€</span>
+            <input type="text" inputmode="numeric" id="prop-mortgage-num" value="140,000" />
+          </div>
+        </div>
+        <div class="slider-rail">
+          <input type="range" id="prop-mortgage" min="0" max="1500000" step="1000" value="140000" />
+        </div>
+        <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>1.5M</span></div>
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-head">
+          <label for="prop-rate">Mortgage rate<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Mortgage rate"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual interest rate on your mortgage. Assumed fixed for the duration — variable-rate mortgages are a v2 concern.</span></span></label>
+          <div class="num-field">
+            <input type="text" inputmode="decimal" id="prop-rate-num" value="4.0" />
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="slider-rail">
+          <input type="range" id="prop-rate" min="0" max="12" step="0.05" value="4" />
+        </div>
+        <div class="range-marks"><span>0%</span><span>12%</span></div>
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-head">
+          <label for="prop-term">Years remaining<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Years remaining"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Years left until the mortgage is fully paid off. <em>Independent of the projection horizon</em> — a 25-year mortgage with 18 years left clears at year 18, not when the chart ends.</span></span></label>
+          <div class="num-field">
+            <input type="text" inputmode="numeric" id="prop-term-num" value="28" />
+            <span class="suffix">yr</span>
+          </div>
+        </div>
+        <div class="slider-rail">
+          <input type="range" id="prop-term" min="0" max="40" step="1" value="28" />
+        </div>
+        <div class="range-marks"><span>0</span><span>40&nbsp;yr</span></div>
+      </div>
+
+    </div>
+
+    <div class="prop-followup" id="prop-followup" hidden>
+      <span class="prop-followup-label">At retirement, the home is</span>
+      <span class="prop-fate-toggle" role="group" aria-label="Property fate at retirement">
+        <button class="prop-fate-opt active" data-fate="kept">kept</button>
+        <span class="prop-divider-sep">·</span>
+        <button class="prop-fate-opt" data-fate="sold">sold</button>
+      </span>
+      <span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain home fate at retirement"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span><strong>Kept</strong> — the home and its equity stay yours through retirement, passed on as legacy. Fig. 2 and the monthly income ignore the property.<br><br><strong>Sold</strong> — the home is liquidated at retirement's start; its equity is added to the portfolio pot. Fig. 2 starts from the larger combined wealth and the monthly income grows accordingly.</span></span>
+    </div>
 
     <section class="chart-panel">
       <header class="chart-head">
@@ -245,114 +340,6 @@
         <span class="lg-sep">/</span>
         <span class="lg lg-real"><span class="swatch"></span>Capital, in today's money</span>
       </p>
-    </section>
-
-    <hr class="rule rule-double" />
-
-    <section class="controls">
-      <header class="controls-head">
-        <span class="controls-eyebrow">III — Property</span>
-        <span class="controls-aside">An optional extension.</span>
-      </header>
-
-      <!-- Property module (toggle + 5 inputs) -->
-      <div class="prop-toggle-row">
-        <hr class="rule" />
-        <span class="prop-toggle-wrap">
-          <span class="prop-label">Property asset<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Property asset"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Whether to include a mortgaged appreciating asset (typically a home). <strong>Excluded</strong>: portfolio-only, default. <strong>Included</strong>: adds a stacked equity band to the chart, a property ledger, and shows how leverage compounds. Property equity is illiquid — it grows net worth but doesn't fund monthly income.</span></span></span>
-          <span class="prop-toggle" role="group" aria-label="Property toggle">
-            <button class="prop-opt active" data-prop="off">excluded</button>
-            <span class="prop-divider-sep">/</span>
-            <button class="prop-opt" data-prop="on">included</button>
-          </span>
-        </span>
-        <hr class="rule" />
-      </div>
-
-      <div class="ctrl-grid ctrl-grid-5 prop-inputs" id="prop-inputs" hidden>
-
-        <div class="ctrl">
-          <div class="ctrl-head">
-            <label for="prop-value">Market value<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Market value"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What you could sell the property for today. <strong>Appreciation applies to this full value</strong> — not just your equity. Capturing that is the whole point of modelling the asset.</span></span></label>
-            <div class="num-field">
-              <span class="prefix js-sym">€</span>
-              <input type="text" inputmode="numeric" id="prop-value-num" value="225,000" />
-            </div>
-          </div>
-          <div class="slider-rail">
-            <input type="range" id="prop-value" min="0" max="2000000" step="1000" value="225000" />
-          </div>
-          <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>2M</span></div>
-        </div>
-
-        <div class="ctrl">
-          <div class="ctrl-head">
-            <label for="prop-appreciation">Appreciation<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Appreciation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual rate the property's value grows. <em>Distinct from your portfolio return</em> — long-run residential averages sit near <em>3–4%</em> nominal. Can be set negative to model declines.</span></span></label>
-            <div class="num-field">
-              <input type="text" inputmode="decimal" id="prop-appreciation-num" value="4.0" />
-              <span class="suffix">%</span>
-            </div>
-          </div>
-          <div class="slider-rail">
-            <input type="range" id="prop-appreciation" min="-5" max="15" step="0.1" value="4" />
-          </div>
-          <div class="range-marks"><span>−5%</span><span>15%</span></div>
-        </div>
-
-        <div class="ctrl">
-          <div class="ctrl-head">
-            <label for="prop-mortgage">Mortgage balance<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Mortgage balance"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What you currently still owe. Amortises on a standard fixed-payment schedule over the years remaining — interest decreases, principal increases, balance falls to zero at term end.</span></span></label>
-            <div class="num-field">
-              <span class="prefix js-sym">€</span>
-              <input type="text" inputmode="numeric" id="prop-mortgage-num" value="140,000" />
-            </div>
-          </div>
-          <div class="slider-rail">
-            <input type="range" id="prop-mortgage" min="0" max="1500000" step="1000" value="140000" />
-          </div>
-          <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>1.5M</span></div>
-        </div>
-
-        <div class="ctrl">
-          <div class="ctrl-head">
-            <label for="prop-rate">Mortgage rate<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Mortgage rate"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual interest rate on your mortgage. Assumed fixed for the duration — variable-rate mortgages are a v2 concern.</span></span></label>
-            <div class="num-field">
-              <input type="text" inputmode="decimal" id="prop-rate-num" value="4.0" />
-              <span class="suffix">%</span>
-            </div>
-          </div>
-          <div class="slider-rail">
-            <input type="range" id="prop-rate" min="0" max="12" step="0.05" value="4" />
-          </div>
-          <div class="range-marks"><span>0%</span><span>12%</span></div>
-        </div>
-
-        <div class="ctrl">
-          <div class="ctrl-head">
-            <label for="prop-term">Years remaining<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Years remaining"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Years left until the mortgage is fully paid off. <em>Independent of the projection horizon</em> — a 25-year mortgage with 18 years left clears at year 18, not when the chart ends.</span></span></label>
-            <div class="num-field">
-              <input type="text" inputmode="numeric" id="prop-term-num" value="28" />
-              <span class="suffix">yr</span>
-            </div>
-          </div>
-          <div class="slider-rail">
-            <input type="range" id="prop-term" min="0" max="40" step="1" value="28" />
-          </div>
-          <div class="range-marks"><span>0</span><span>40&nbsp;yr</span></div>
-        </div>
-
-      </div>
-
-      <div class="prop-followup" id="prop-followup" hidden>
-        <span class="prop-followup-label">At retirement, the home is</span>
-        <span class="prop-fate-toggle" role="group" aria-label="Property fate at retirement">
-          <button class="prop-fate-opt active" data-fate="kept">kept</button>
-          <span class="prop-divider-sep">·</span>
-          <button class="prop-fate-opt" data-fate="sold">sold</button>
-        </span>
-        <span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain home fate at retirement"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span><strong>Kept</strong> — the home and its equity stay yours through retirement, passed on as legacy. Fig. 2 and the monthly income ignore the property.<br><br><strong>Sold</strong> — the home is liquidated at retirement's start; its equity is added to the portfolio pot. Fig. 2 starts from the larger combined wealth and the monthly income grows accordingly.</span></span>
-      </div>
-
     </section>
 
     <hr class="rule rule-double" />

@@ -34,6 +34,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body { margin: 0; padding: 0; }
 
 html { background: var(--paper); }
@@ -559,61 +560,65 @@ body {
   .ctrl-grid-5 { grid-template-columns: repeat(2, 1fr); column-gap: 48px; }
 }
 
-/* ─── property toggle row ─── */
+/* ─── property disclosure row ─── */
 .prop-toggle-row {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 0;
-  margin: 40px 0 28px;
+  margin: 32px 0 22px;
 }
 .prop-toggle-row .rule { margin: 0; }
 .prop-toggle-wrap {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 15px;
-  color: var(--ink-soft);
-  font-variation-settings: "opsz" 24, "SOFT" 80;
   display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  padding: 0 22px;
+  align-items: baseline;
+  gap: 6px;
+  padding: 0 18px;
   white-space: nowrap;
 }
-.prop-label {
-  color: var(--ink-soft);
-  letter-spacing: 0.01em;
-}
-.prop-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 3px 12px 4px;
-  border: 1px solid var(--rule);
-  background: rgba(255,255,255,0.015);
-}
-.prop-opt {
+.prop-disclosure {
   appearance: none;
   background: transparent;
   border: 0;
-  padding: 0;
+  padding: 4px 0 5px;
   cursor: pointer;
-  font: inherit;
+  font-family: var(--serif);
   font-style: italic;
-  color: var(--ink-faint);
+  font-size: 15.5px;
+  font-variation-settings: "opsz" 24, "SOFT" 80;
   letter-spacing: 0.01em;
-  font-size: 14px;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 9px;
   transition: color 0.18s ease;
 }
-.prop-opt:hover { color: var(--ink-soft); }
-.prop-opt.active { color: var(--brass); }
+.prop-disclosure:hover { color: var(--ink); }
+.prop-disclosure:focus-visible {
+  outline: none;
+  color: var(--ink);
+}
+.prop-disclosure[data-state="on"] { color: var(--ink); }
+.prop-disclosure-sign {
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--brass);
+  line-height: 1;
+  display: inline-block;
+  width: 0.7em;
+  text-align: center;
+  transform: translateY(-1px);
+}
 .prop-divider-sep {
   color: var(--ink-faint);
   font-style: italic;
   font-size: 13px;
 }
 .prop-inputs {
-  margin-top: 4px;
+  margin-top: 8px;
+  margin-bottom: 4px;
   animation: prop-fade-in 0.32s ease both;
 }
 @keyframes prop-fade-in {
@@ -627,7 +632,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin: 26px 0 4px;
+  margin: 22px 0 24px;
   font-family: var(--serif);
   font-style: italic;
   font-size: 14px;

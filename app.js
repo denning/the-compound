@@ -684,24 +684,23 @@
     if (e.key === 'Escape') closeAllTips();
   });
 
-  // ─── property toggle ───
+  // ─── property disclosure ───
   function applyPropertyToggle() {
-    document.querySelectorAll('.prop-opt').forEach(b => {
-      const isActive = (b.dataset.prop === 'on') === state.property.enabled;
-      b.classList.toggle('active', isActive);
-    });
-    $('prop-inputs').hidden = !state.property.enabled;
-    $('prop-followup').hidden = !state.property.enabled;
+    const btn = document.querySelector('.prop-disclosure');
+    const on = state.property.enabled;
+    btn.dataset.state = on ? 'on' : 'off';
+    btn.setAttribute('aria-expanded', String(on));
+    btn.querySelector('.prop-disclosure-sign').textContent = on ? '−' : '+';
+    btn.querySelector('.prop-disclosure-text').textContent =
+      on ? 'Property asset · included' : 'Include a property asset';
+    $('prop-inputs').hidden = !on;
+    $('prop-followup').hidden = !on;
   }
-  document.querySelectorAll('.prop-opt').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const desired = btn.dataset.prop === 'on';
-      if (state.property.enabled === desired) return;
-      state.property.enabled = desired;
-      saveProperty();
-      applyPropertyToggle();
-      render();
-    });
+  document.querySelector('.prop-disclosure').addEventListener('click', () => {
+    state.property.enabled = !state.property.enabled;
+    saveProperty();
+    applyPropertyToggle();
+    render();
   });
   applyPropertyToggle();
 
