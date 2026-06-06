@@ -185,6 +185,49 @@ body {
   font-variation-settings: "opsz" 24, "SOFT" 80;
   white-space: nowrap;
 }
+.part-disclosure-btn {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 4px 8px 5px;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  white-space: nowrap;
+  transition: color 0.18s ease;
+}
+.part-disclosure-btn:hover .part-tag,
+.part-disclosure-btn:focus-visible .part-tag { color: var(--ink); }
+.part-disclosure-btn:focus-visible { outline: none; }
+.part-disclosure-off {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  font-variation-settings: "opsz" 24, "SOFT" 80;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
+  transition: color 0.18s ease;
+}
+.part-disclosure-btn:hover .part-disclosure-off,
+.part-disclosure-btn:focus-visible .part-disclosure-off { color: var(--ink); }
+.part-disclosure-sign {
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--brass);
+  line-height: 1;
+  display: inline-block;
+  width: 0.7em;
+  text-align: center;
+  transform: translateY(-1px);
+}
+.part-disclosure-btn[data-state="off"] .part-disclosure-on { display: none; }
+.part-disclosure-btn[data-state="on"] .part-disclosure-off { display: none; }
 
 /* ─── hero ─── */
 .hero {

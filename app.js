@@ -2,6 +2,7 @@
   const CUR_SYMBOLS = { EUR: '€', USD: '$' };
   const STORAGE_CUR = 'compound.currency';
   const STORAGE_PROP = 'compound.property';
+  const STORAGE_PART2 = 'compound.partTwoVisible';
 
   const savedCur = (() => {
     try { return localStorage.getItem(STORAGE_CUR); } catch { return null; }
@@ -12,6 +13,9 @@
       return raw ? JSON.parse(raw) : null;
     } catch { return null; }
   })();
+  const savedPart2 = (() => {
+    try { return localStorage.getItem(STORAGE_PART2) === '1'; } catch { return false; }
+  })();
 
   const state = {
     principal: 10000,
@@ -21,6 +25,7 @@
     years: 30,
     retirementYears: 25,
     currency: CUR_SYMBOLS[savedCur] ? savedCur : 'EUR',
+    partTwoVisible: savedPart2,
     property: {
       enabled: savedProp?.enabled ?? false,
       value: savedProp?.value ?? 225000,
@@ -720,6 +725,22 @@
     });
   });
   applyFateToggle();
+
+  // ─── Part II disclosure ───
+  function applyPartTwoToggle() {
+    const btn = document.querySelector('.part-disclosure-btn');
+    const wrap = $('part-two');
+    const on = state.partTwoVisible;
+    btn.dataset.state = on ? 'on' : 'off';
+    btn.setAttribute('aria-expanded', String(on));
+    wrap.hidden = !on;
+  }
+  document.querySelector('.part-disclosure-btn').addEventListener('click', () => {
+    state.partTwoVisible = !state.partTwoVisible;
+    try { localStorage.setItem(STORAGE_PART2, state.partTwoVisible ? '1' : '0'); } catch {}
+    applyPartTwoToggle();
+  });
+  applyPartTwoToggle();
 
   render();
 })();

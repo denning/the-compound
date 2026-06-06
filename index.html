@@ -278,12 +278,22 @@
       </dl>
     </section>
 
-    <!-- Editorial divider — Part II -->
+    <!-- Editorial divider — Part II disclosure -->
     <div class="part-break">
       <hr class="rule" />
-      <span class="part-tag">·&nbsp;II&nbsp;·</span>
+      <button class="part-disclosure-btn" type="button" data-state="off" aria-expanded="false" aria-controls="part-two">
+        <span class="part-disclosure-off">
+          <span class="part-disclosure-sign" aria-hidden="true">+</span>
+          <span class="part-disclosure-text">See your retirement income</span>
+        </span>
+        <span class="part-disclosure-on">
+          <span class="part-tag">·&nbsp;II&nbsp;·</span>
+        </span>
+      </button>
       <hr class="rule" />
     </div>
+
+    <div id="part-two" hidden>
 
     <!-- Part II — Drawdown -->
     <section class="hero hero-2">
@@ -341,6 +351,8 @@
         <span class="lg lg-real"><span class="swatch"></span>Capital, in today's money</span>
       </p>
     </section>
+
+    </div><!-- /#part-two -->
 
     <hr class="rule rule-double" />
 
