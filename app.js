@@ -22,9 +22,12 @@
   })();
 
   const initialLang = (() => {
-    if (savedLang === 'ru' || savedLang === 'en') return savedLang;
+    if (savedLang === 'ru' || savedLang === 'en' || savedLang === 'nl') return savedLang;
     const nav = (navigator.language || (navigator.languages && navigator.languages[0]) || 'en');
-    return nav.slice(0, 2).toLowerCase() === 'ru' ? 'ru' : 'en';
+    const code = nav.slice(0, 2).toLowerCase();
+    if (code === 'ru') return 'ru';
+    if (code === 'nl') return 'nl';
+    return 'en';
   })();
 
   const state = {
@@ -237,6 +240,99 @@
       'prop.payoff.prefix': 'Год',
       'prop.payoff.none': '—',
     },
+    nl: {
+      'page.title': 'Samengestelde groei — Een projectie',
+      'masthead.volume': 'Deel&nbsp;I &nbsp;·&nbsp; Nr.&nbsp;01',
+      'masthead.title': '— Samengestelde groei —',
+      'aria.lang': 'Taal',
+      'aria.currency': 'Valuta',
+      'aria.euros': 'Euro\'s',
+      'aria.dollars': 'Dollars',
+      'aria.accum-years': 'Opbouwjaren',
+      'aria.retire-years': 'Pensioenjaren',
+      'aria.fate': 'Bestemming van de woning bij pensioen',
+
+      'hero1.eyebrow': '<span class="brk">·</span>&nbsp;&nbsp;Over&nbsp;<em id="years-word">dertig</em>&nbsp;jaar&nbsp;&nbsp;<span class="brk">·</span>',
+      'hero1.caption.portfolio': '…een projectie van uw spaargeld, met de koopkracht van vandaag gelijk aan <span class="pull-real" id="total-real">€853.021</span>.',
+      'hero1.caption.net': '…uw portefeuille van <span class="pull-soft"><span class="js-sym">€</span><span id="portfolio-nom">1.545.130</span></span> plus overwaarde van <span class="pull-soft"><span class="js-sym">€</span><span id="equity-nom">285.000</span></span>, met de koopkracht van vandaag gelijk aan <span class="pull-real" id="total-real-net">€1.012.000</span>.',
+
+      'ledger.contributed': 'Ingelegd<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Ingelegd"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Alles wat u zult hebben ingelegd — startkapitaal plus alle maandelijkse stortingen, opgeteld over de horizon. Wat daarbovenuit komt, is groei.</span></span>',
+      'ledger.growth': 'Samengestelde groei<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Samengestelde groei"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Wat uw geld verdiende boven uw inleg. Samengestelde groei betekent dat elke jaarlijkse groei zelf weer groei oplevert — de curve wordt steiler met de tijd.</span></span>',
+      'ledger.multiple': 'Veelvoud van kapitaal<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Veelvoud van kapitaal"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Hoe vaak uw inleg groeide, vóór inflatie. <em>3,5×</em> betekent dat €100k ingelegd nominaal €350k werd aan het einde van de horizon.</span></span>',
+      'ledger.erosion': 'Inflatieverlies<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Uitleg Inflatieverlies"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Hoeveel koopkracht inflatie stilletjes wegvreet van het nominale bedrag — het verschil tussen wat u op papier hebt en wat dat zal kopen.</span></span>',
+
+      'input.principal': 'Beschikbaar kapitaal<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Beschikbaar kapitaal"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Uw startbedrag — alle liquide spaargelden of beleggingen die u vandaag aan het werk zet. Toekomstige stortingen gaan in „Maandelijkse inleg" hiernaast.</span></span>',
+      'input.monthly': 'Maandelijkse inleg<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Uitleg Maandelijkse inleg"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Geld dat u elke maand toevoegt, <em>in geld van vandaag</em>. Elk jaar groeit de inleg met de inflatie plus het tempo van <em>Inleggroei</em>, zodat het gekozen bedrag zijn koopkracht over de hele horizon behoudt.</span></span>',
+      'input.assumptions': 'Aannames',
+      'input.return': 'Jaarlijks rendement<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Jaarlijks rendement"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Verwacht nominaal jaarlijks rendement op belegd kapitaal, vóór inflatie. Wereldaandelen op lange termijn zitten rond <em>7%</em>; gespreide portefeuilles <em>5–6%</em>; obligaties <em>3–4%</em>.</span></span>',
+      'input.inflation': 'Inflatie<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Inflatie"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Hoe snel prijzen elk jaar stijgen, waardoor koopkracht uitholt. De ECB streeft naar <em>2%</em>; haar over decennia constant veronderstellen is een vereenvoudiging.</span></span>',
+      'input.contrib-growth': 'Inleggroei<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Uitleg Inleggroei"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Hoeveel uw inleg elk jaar groeit <em>bovenop de inflatie</em>. <em>0%</em> houdt hem constant in geld van vandaag; <em>1–2%</em> weerspiegelt de typische reële loongroei over een loopbaan; negatieve waarden modelleren een terugval in inkomen.</span></span>',
+
+      'prop.toggle.off': 'Een woning meenemen',
+      'prop.toggle.on': 'Woning · meegenomen',
+      'prop.toggle.help': '<button class="help-mark" type="button" aria-label="Uitleg Woning"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Of u een hypothecair belast, in waarde stijgend bezit meeneemt (meestal een eigen huis). <strong>Niet meegenomen</strong>: alleen portefeuille, standaard. <strong>Meegenomen</strong>: voegt een gestapelde overwaardeband aan de grafiek toe, een woningoverzicht, en laat zien hoe hefboomwerking samengesteld werkt. Overwaarde is illiquide — het laat uw vermogen groeien, maar financiert geen maandelijks inkomen.</span>',
+      'prop.value': 'Marktwaarde<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Marktwaarde"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Waarvoor u de woning vandaag zou kunnen verkopen. <strong>Waardestijging geldt voor deze volledige waarde</strong> — niet alleen voor uw overwaarde. Dat vangen is het hele doel van het modelleren van het bezit.</span></span>',
+      'prop.mortgage': 'Hypotheeksaldo<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Uitleg Hypotheeksaldo"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Wat u nu nog verschuldigd bent. Wordt afgelost volgens een standaard annuïtair schema over de resterende jaren — rente daalt, aflossing stijgt, het saldo loopt aan het eind van de looptijd naar nul.</span></span>',
+      'prop.appreciation': 'Waardestijging<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Waardestijging"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Jaarlijks tempo waarmee de woningwaarde stijgt. <em>Verschillend van uw portefeuillerendement</em> — langjarige gemiddelden voor woningen liggen rond <em>3–4%</em> nominaal. Kan negatief worden ingesteld om dalingen te modelleren.</span></span>',
+      'prop.rate': 'Hypotheekrente<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Hypotheekrente"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Jaarlijks rentepercentage op uw hypotheek. Aangenomen vast voor de gehele looptijd — variabele hypotheken zijn voor een v2.</span></span>',
+      'prop.term': 'Resterende jaren<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Uitleg Resterende jaren"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Aantal jaar tot de hypotheek volledig is afgelost. <em>Onafhankelijk van de projectiehorizon</em> — een 25-jarige hypotheek met nog 18 jaar te gaan wordt in jaar 18 afgelost, niet wanneer de grafiek eindigt.</span></span>',
+      'prop.term.suffix': 'jaar',
+      'prop.followup.label': 'Bij pensioen wordt de woning',
+      'prop.followup.kept': 'behouden',
+      'prop.followup.sold': 'verkocht',
+
+      'chart1.eyebrow': 'Fig.&nbsp;1 — Traject van het kapitaal',
+      'chart1.aria': 'Geprojecteerde groei',
+      'chart.years': 'jaar',
+      'chart1.legend.nominal': 'Nominale waarde',
+      'chart1.legend.portfolio': 'Portefeuille',
+      'chart1.legend.equity': 'Overwaarde',
+      'chart1.legend.real': 'Reële waarde, in geld van vandaag',
+      'chart1.legend.net-real': 'Nettovermogen, reëel',
+      'chart1.legend.contributed': 'Som ingelegd',
+
+      'prop.addendum': '<span class="prop-addendum-mark">·</span> Woning bereikt <span class="prop-addendum-val"><span class="ld-curr js-sym">€</span><span id="prop-value-end">336.910</span></span>, waarvan <span class="prop-addendum-val"><span class="ld-curr js-sym">€</span><span id="prop-equity-end">336.910</span></span> de uwe is. Hefboomwerking levert <span class="prop-addendum-val"><span id="prop-roe-y1">21,50</span>%</span> in jaar 1; de hypotheek wordt afgelost <span class="prop-addendum-val" id="prop-payoff">Jr 28</span>.',
+
+      'part2.toggle': 'Toon uw pensioeninkomen',
+      'hero2.eyebrow': '<span class="brk">·</span>&nbsp;&nbsp;<span id="ret-eyebrow-from">Waaruit</span>, voor&nbsp;<em id="ret-years-word">vijfentwintig</em>&nbsp;jaar&nbsp;&nbsp;<span class="brk">·</span>',
+      'hero2.unit.month': '/mnd',
+      'hero2.caption': '…een passief maandinkomen in de koopkracht van vandaag, bij start van het pensioen gelijk aan <span class="pull-real"><span class="js-sym">€</span><span id="ret-income-nom">9.056</span><span class="unit-soft">/mnd</span></span>.',
+
+      'ledger.annual-income': 'Jaarinkomen<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Jaarinkomen"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Duurzaam jaarinkomen in geld van vandaag. Blijft constant in reële termen — het nominale bedrag groeit elk jaar mee met de inflatie.</span></span>',
+      'ledger.effective-rate': 'Effectief percentage<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Effectief percentage"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Jaarlijkse onttrekking als percentage van het reële startsaldo. Boven ~4% raakt het kapitaal doorgaans sneller op dan de historische „veilige" grens voor 30 jaar.</span></span>',
+      'ledger.start': 'Bij start pensioen<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Bij start pensioen"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>De daadwerkelijke euro\'s/dollars die u in de eerste maand van uw pensioen opneemt, in toekomstig geld. Groeit van daaruit mee met de inflatie.</span></span>',
+      'ledger.start.suffix': '/mnd',
+      'ledger.withdrawn': 'Totaal onttrokken<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Uitleg Totaal onttrokken"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Totaal nominaal bedrag dat u over alle pensioenjaren opneemt. Veel groter dan het startbedrag — elke opname is groter dan de vorige.</span></span>',
+
+      'chart2.eyebrow': 'Fig.&nbsp;2 — Afbouw van het kapitaal',
+      'chart2.aria': 'Afbouw van het kapitaal',
+      'chart2.legend.nominal': 'Kapitaal, nominaal',
+      'chart2.legend.real': 'Kapitaal, in geld van vandaag',
+
+      'colophon.fonts': 'Gezet in <em>Fraunces</em> en <em>IBM Plex Mono</em>.',
+      'colophon.monthly': 'Maandelijks samengesteld.',
+      'colophon.disclaimer': 'Een projectie — geen garantie.',
+
+      'chart.zero.today': 'Vandaag',
+      'chart.zero.retire': 'Begin pensioen',
+      'chart.x.accum': 'jaar vanaf nu',
+      'chart.x.retire': 'jaar na pensionering',
+
+      'tip.year': 'Jaar',
+      'tip.networth': 'Nettovermogen',
+      'tip.portfolio': 'Portefeuille',
+      'tip.equity': 'Overwaarde',
+      'tip.real': 'Reëel',
+      'tip.nominal': 'Nominaal',
+      'tip.paidin': 'Ingelegd',
+
+      'hero2.from': 'Waaruit',
+      'hero2.from.portfolio': 'Uit uw portefeuille',
+      'hero2.from.portfolio-home': 'Uit portefeuille en woning',
+
+      'prop.payoff.prefix': 'Jr',
+      'prop.payoff.none': '—',
+    },
   };
 
   const t = (key) => {
@@ -250,24 +346,29 @@
 
   const $ = (id) => document.getElementById(id);
   const sym = () => CUR_SYMBOLS[state.currency];
-  const numLocale = () => state.language === 'ru' ? 'ru-RU' : 'en-US';
+  const numLocale = () => {
+    if (state.language === 'ru') return 'ru-RU';
+    if (state.language === 'nl') return 'nl-NL';
+    return 'en-US';
+  };
+  const usesComma = () => state.language === 'ru' || state.language === 'nl';
 
   const fmtAmt = (n) => Math.round(n).toLocaleString(numLocale());
   const fmtAmtShort = (n) => {
     const s = sym();
     const abs = Math.abs(n);
-    const dec = (x, digits) => x.toFixed(digits).replace('.', state.language === 'ru' ? ',' : '.');
+    const dec = (x, digits) => x.toFixed(digits).replace('.', usesComma() ? ',' : '.');
     if (abs >= 1_000_000) return s + dec(n / 1_000_000, n >= 10_000_000 ? 0 : 1) + 'M';
     if (abs >= 1_000) return s + Math.round(n / 1_000) + 'k';
     return s + Math.round(n);
   };
   const fmtMul = (n) => {
     const v = (Math.round(n * 100) / 100).toFixed(2);
-    return state.language === 'ru' ? v.replace('.', ',') : v;
+    return usesComma() ? v.replace('.', ',') : v;
   };
   const fmtPct2 = (n) => {
     const v = (Math.round(n * 100) / 100).toFixed(2);
-    return state.language === 'ru' ? v.replace('.', ',') : v;
+    return usesComma() ? v.replace('.', ',') : v;
   };
   const parseNum = (s) => {
     if (typeof s !== 'string') return NaN;
@@ -286,6 +387,10 @@
     ru: {
       5: 'пять', 10: 'десять', 15: 'пятнадцать', 20: 'двадцать', 25: 'двадцать пять',
       30: 'тридцать', 35: 'тридцать пять', 40: 'сорок', 45: 'сорок пять', 50: 'пятьдесят',
+    },
+    nl: {
+      5: 'vijf', 10: 'tien', 15: 'vijftien', 20: 'twintig', 25: 'vijfentwintig',
+      30: 'dertig', 35: 'vijfendertig', 40: 'veertig', 45: 'vijfenveertig', 50: 'vijftig',
     },
   };
   const yearWord = (n) => (YEAR_WORDS[state.language] || YEAR_WORDS.en)[n] || String(n);
