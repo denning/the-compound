@@ -21,6 +21,8 @@
   --terra: #d2664a;        /* real (today's money) */
   --terra-deep: #ad4626;
   --sage: rgba(237, 225, 197, 0.35); /* contrib */
+  --olive: #94a36b;        /* equity (stacked band) */
+  --olive-deep: #6f7e4a;
 
   /* type */
   --serif: 'Fraunces', 'Iowan Old Style', 'Georgia', serif;
@@ -278,6 +280,13 @@ body {
   font-weight: 500;
   white-space: nowrap;
 }
+.caption .pull-soft {
+  font-style: normal;
+  color: var(--ink);
+  font-weight: 500;
+  white-space: nowrap;
+  font-variation-settings: "opsz" 18, "SOFT" 40;
+}
 
 /* ─── ledger (the small stats row) ─── */
 .ledger dl {
@@ -432,6 +441,7 @@ body {
 }
 .lg-nominal .swatch { background: var(--brass); }
 .lg-real .swatch { background: var(--terra); }
+.lg-equity .swatch { background: var(--olive); }
 .lg-contrib .swatch {
   background: transparent;
   border-top: 1px dashed var(--sage);
@@ -521,8 +531,98 @@ body {
   column-gap: 44px;
   row-gap: 36px;
 }
+.ctrl-grid-5 {
+  grid-template-columns: repeat(5, 1fr);
+  column-gap: 32px;
+}
 @media (max-width: 1080px) {
   .ctrl-grid { grid-template-columns: repeat(2, 1fr); column-gap: 48px; }
+  .ctrl-grid-5 { grid-template-columns: repeat(2, 1fr); column-gap: 48px; }
+}
+
+/* ─── property toggle row ─── */
+.prop-toggle-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0;
+  margin: 40px 0 28px;
+}
+.prop-toggle-row .rule { margin: 0; }
+.prop-toggle-wrap {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink-soft);
+  font-variation-settings: "opsz" 24, "SOFT" 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 22px;
+  white-space: nowrap;
+}
+.prop-label {
+  color: var(--ink-soft);
+  letter-spacing: 0.01em;
+}
+.prop-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 12px 4px;
+  border: 1px solid var(--rule);
+  background: rgba(255,255,255,0.015);
+}
+.prop-opt {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  font-style: italic;
+  color: var(--ink-faint);
+  letter-spacing: 0.01em;
+  font-size: 14px;
+  transition: color 0.18s ease;
+}
+.prop-opt:hover { color: var(--ink-soft); }
+.prop-opt.active { color: var(--brass); }
+.prop-divider-sep {
+  color: var(--ink-faint);
+  font-style: italic;
+  font-size: 13px;
+}
+.prop-inputs {
+  margin-top: 4px;
+  animation: prop-fade-in 0.32s ease both;
+}
+@keyframes prop-fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* sub sub label on Y₁ */
+.ledger dt sub {
+  font-size: 0.62em;
+  vertical-align: baseline;
+  position: relative;
+  top: 0.2em;
+  margin: 0 1px 0 0;
+}
+
+/* ─── chart equity (stacked band) ─── */
+.chart-wrap svg .area-equity {
+  fill: var(--olive);
+  opacity: 0.22;
+}
+.chart-wrap svg .line-equity {
+  fill: none;
+  stroke: var(--olive);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.85;
 }
 
 .ctrl-head {

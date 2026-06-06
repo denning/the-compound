@@ -37,8 +37,11 @@
       <h1 class="figure">
         <span class="curr js-sym">€</span><span id="total-nominal">1,545,130</span>
       </h1>
-      <p class="caption">
+      <p class="caption" id="caption-portfolio">
         …being a projection of your savings, compounded monthly, amounting in today's purchasing power to <span class="pull-real" id="total-real">€853,021</span>.
+      </p>
+      <p class="caption" id="caption-net" hidden>
+        …being your portfolio of <span class="pull-soft"><span class="js-sym">€</span><span id="portfolio-nom">1,545,130</span></span> plus property equity of <span class="pull-soft"><span class="js-sym">€</span><span id="equity-nom">285,000</span></span>, amounting in today's purchasing power to <span class="pull-real" id="total-real-net">€1,012,000</span>.
       </p>
     </section>
 
@@ -82,12 +85,37 @@
         <div class="hover-tip" id="tip" hidden></div>
       </div>
       <p class="chart-foot">
-        <span class="lg lg-nominal"><span class="swatch"></span>Nominal value</span>
+        <span class="lg lg-nominal"><span class="swatch"></span><span class="lg-label-default">Nominal value</span><span class="lg-label-prop" hidden>Portfolio</span></span>
+        <span class="lg-sep lg-sep-equity" hidden>/</span>
+        <span class="lg lg-equity" hidden><span class="swatch"></span>Home equity</span>
         <span class="lg-sep">/</span>
-        <span class="lg lg-real"><span class="swatch"></span>Real value, in today's money</span>
+        <span class="lg lg-real"><span class="swatch"></span><span class="lg-label-default">Real value, in today's money</span><span class="lg-label-prop" hidden>Net worth, real</span></span>
         <span class="lg-sep">/</span>
         <span class="lg lg-contrib"><span class="swatch"></span>Sum contributed</span>
       </p>
+    </section>
+
+    <!-- Property ledger (shown when property is enabled) -->
+    <hr class="rule" id="prop-ledger-rule" hidden />
+    <section class="ledger ledger-property" id="prop-ledger" hidden>
+      <dl>
+        <div>
+          <dt>Property Value</dt>
+          <dd><span class="ld-curr js-sym">€</span><span id="prop-value-end">336,910</span></dd>
+        </div>
+        <div>
+          <dt>Home Equity</dt>
+          <dd><span class="ld-curr js-sym">€</span><span id="prop-equity-end">336,910</span></dd>
+        </div>
+        <div>
+          <dt>Y<sub>1</sub> Equity Return</dt>
+          <dd><span id="prop-roe-y1">21.50</span><span class="ld-suffix">%</span></dd>
+        </div>
+        <div>
+          <dt>Mortgage Cleared</dt>
+          <dd><span id="prop-payoff">Yr 28</span></dd>
+        </div>
+      </dl>
     </section>
 
     <!-- Editorial divider — Part II -->
@@ -99,12 +127,12 @@
 
     <!-- Part II — Drawdown -->
     <section class="hero hero-2">
-      <p class="eyebrow"><span class="brk">·</span>&nbsp;&nbsp;From which, for&nbsp;<em id="ret-years-word">twenty-five</em>&nbsp;years&nbsp;&nbsp;<span class="brk">·</span></p>
+      <p class="eyebrow"><span class="brk">·</span>&nbsp;&nbsp;<span id="ret-eyebrow-from">From which</span>, for&nbsp;<em id="ret-years-word">twenty-five</em>&nbsp;years&nbsp;&nbsp;<span class="brk">·</span></p>
       <h1 class="figure">
         <span class="curr js-sym">€</span><span id="ret-income">4,992</span><span class="unit">/month</span>
       </h1>
       <p class="caption">
-        …a passive monthly income in today's purchasing power, equivalent at retirement's start to <span class="pull-real"><span class="js-sym">€</span><span id="ret-income-nom">9,041</span><span class="unit-soft">/month</span></span>.
+        …a passive monthly income in today's purchasing power, equivalent at retirement's start to <span class="pull-real"><span class="js-sym">€</span><span id="ret-income-nom">9,056</span><span class="unit-soft">/month</span></span>.
       </p>
     </section>
 
@@ -114,7 +142,7 @@
       <dl>
         <div>
           <dt>Annual Income</dt>
-          <dd><span class="ld-curr js-sym">€</span><span id="ret-annual">59,904</span></dd>
+          <dd><span class="ld-curr js-sym">€</span><span id="ret-annual">59,899</span></dd>
         </div>
         <div>
           <dt>Effective Rate</dt>
@@ -122,11 +150,11 @@
         </div>
         <div>
           <dt>At Retirement Start</dt>
-          <dd><span class="ld-curr js-sym">€</span><span id="ret-start">9,041</span><span class="ld-suffix-thin">/mo</span></dd>
+          <dd><span class="ld-curr js-sym">€</span><span id="ret-start">9,056</span><span class="ld-suffix-thin">/mo</span></dd>
         </div>
         <div>
           <dt>Sum Withdrawn</dt>
-          <dd><span class="ld-curr js-sym">€</span><span id="ret-total">3,621,000</span></dd>
+          <dd><span class="ld-curr js-sym">€</span><span id="ret-total">3,512,768</span></dd>
         </div>
       </dl>
     </section>
@@ -221,6 +249,95 @@
         </div>
 
       </div>
+
+      <!-- Property module (toggle + 5 inputs) -->
+      <div class="prop-toggle-row">
+        <hr class="rule" />
+        <span class="prop-toggle-wrap">
+          <span class="prop-label">Property asset</span>
+          <span class="prop-toggle" role="group" aria-label="Property toggle">
+            <button class="prop-opt active" data-prop="off">excluded</button>
+            <span class="prop-divider-sep">/</span>
+            <button class="prop-opt" data-prop="on">included</button>
+          </span>
+        </span>
+        <hr class="rule" />
+      </div>
+
+      <div class="ctrl-grid ctrl-grid-5 prop-inputs" id="prop-inputs" hidden>
+
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="prop-value">Market value</label>
+            <div class="num-field">
+              <span class="prefix js-sym">€</span>
+              <input type="text" inputmode="numeric" id="prop-value-num" value="225,000" />
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="prop-value" min="0" max="2000000" step="1000" value="225000" />
+          </div>
+          <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>2M</span></div>
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="prop-appreciation">Appreciation</label>
+            <div class="num-field">
+              <input type="text" inputmode="decimal" id="prop-appreciation-num" value="4.0" />
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="prop-appreciation" min="-5" max="15" step="0.1" value="4" />
+          </div>
+          <div class="range-marks"><span>−5%</span><span>15%</span></div>
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="prop-mortgage">Mortgage balance</label>
+            <div class="num-field">
+              <span class="prefix js-sym">€</span>
+              <input type="text" inputmode="numeric" id="prop-mortgage-num" value="140,000" />
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="prop-mortgage" min="0" max="1500000" step="1000" value="140000" />
+          </div>
+          <div class="range-marks"><span>0</span><span><span class="js-sym">€</span>1.5M</span></div>
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="prop-rate">Mortgage rate</label>
+            <div class="num-field">
+              <input type="text" inputmode="decimal" id="prop-rate-num" value="4.0" />
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="prop-rate" min="0" max="12" step="0.05" value="4" />
+          </div>
+          <div class="range-marks"><span>0%</span><span>12%</span></div>
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="prop-term">Years remaining</label>
+            <div class="num-field">
+              <input type="text" inputmode="numeric" id="prop-term-num" value="28" />
+              <span class="suffix">yr</span>
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="prop-term" min="0" max="40" step="1" value="28" />
+          </div>
+          <div class="range-marks"><span>0</span><span>40&nbsp;yr</span></div>
+        </div>
+
+      </div>
+
     </section>
 
     <hr class="rule rule-double" />

@@ -1,7 +1,16 @@
 (() => {
   const CUR_SYMBOLS = { EUR: '€', USD: '$' };
+  const STORAGE_CUR = 'compound.currency';
+  const STORAGE_PROP = 'compound.property';
+
   const savedCur = (() => {
-    try { return localStorage.getItem('compound.currency'); } catch { return null; }
+    try { return localStorage.getItem(STORAGE_CUR); } catch { return null; }
+  })();
+  const savedProp = (() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_PROP);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
   })();
 
   const state = {
@@ -12,7 +21,19 @@
     years: 30,
     retirementYears: 25,
     currency: CUR_SYMBOLS[savedCur] ? savedCur : 'EUR',
+    property: {
+      enabled: savedProp?.enabled ?? false,
+      value: savedProp?.value ?? 225000,
+      appreciation: savedProp?.appreciation ?? 0.04,
+      mortgageBalance: savedProp?.mortgageBalance ?? 140000,
+      mortgageRate: savedProp?.mortgageRate ?? 0.04,
+      termRemaining: savedProp?.termRemaining ?? 28,
+    },
   };
+
+  function saveProperty() {
+    try { localStorage.setItem(STORAGE_PROP, JSON.stringify(state.property)); } catch {}
+  }
 
   const $ = (id) => document.getElementById(id);
   const sym = () => CUR_SYMBOLS[state.currency];
@@ -33,7 +54,7 @@
   };
   const parseDecimal = (s) => {
     if (typeof s !== 'string') return NaN;
-    return parseFloat(s.replace(',', '.'));
+    return parseFloat(s.replace(/[−–]/g, '-').replace(',', '.'));
   };
 
   const YEAR_WORDS = {
@@ -64,12 +85,47 @@
     return points;
   }
 
+  function projectProperty(months) {
+    const p = state.property;
+    const rM = p.mortgageRate / 12;
+    const n = p.termRemaining * 12;
+    let payment = 0;
+    if (p.mortgageBalance > 0 && rM > 0 && n > 0) {
+      payment = p.mortgageBalance * rM / (1 - Math.pow(1 + rM, -n));
+    } else if (p.mortgageBalance > 0 && n > 0) {
+      payment = p.mortgageBalance / n;
+    }
+    const gM = p.appreciation / 12; // match the portfolio's r/12 convention
+
+    const yearly = [];
+    let v = p.value;
+    let bal = p.mortgageBalance;
+    yearly.push({ year: 0, value: v, balance: bal, equity: v - bal });
+
+    let payoffMonth = null;
+
+    for (let m = 1; m <= months; m++) {
+      v *= 1 + gM; // appreciate FULL value
+      if (bal > 0) {
+        const interest = bal * rM;
+        const principal = Math.max(0, payment - interest);
+        bal = bal - principal;
+        if (bal < 0.01) bal = 0; // clamp floating-point dust to zero
+        if (bal === 0 && payoffMonth === null) payoffMonth = m;
+      }
+      if (m % 12 === 0 || m === months) {
+        yearly.push({ year: m / 12, value: v, balance: bal, equity: v - bal });
+      }
+    }
+    return { yearly, payoffMonth };
+  }
+
   function projectRetirement(potNominal, potReal) {
     const N = state.retirementYears;
     const months = N * 12;
     const rM = state.annualReturn / 12;
     const iM = Math.pow(1 + state.inflation, 1 / 12) - 1;
-    const rrM = (1 + rM) / (1 + iM) - 1; // monthly real return
+    const rrM = (1 + rM) / (1 + iM) - 1;
     const accumInflationFactor = Math.pow(1 + state.inflation, state.years);
 
     let wReal;
@@ -100,10 +156,9 @@
     return { points, wReal, wNomStart, totalReal, totalNominal };
   }
 
-  // ─── small helpers ───
-  function smoothPath(pts) {
-    if (pts.length < 2) return '';
-    let d = `M${pts[0].x},${pts[0].y}`;
+  // ─── helpers ───
+  function smoothCurvesFrom(pts) {
+    let d = '';
     for (let i = 0; i < pts.length - 1; i++) {
       const p0 = pts[i - 1] || pts[i];
       const p1 = pts[i];
@@ -117,7 +172,10 @@
     }
     return d;
   }
-
+  function smoothPath(pts) {
+    if (pts.length < 2) return '';
+    return `M${pts[0].x},${pts[0].y}` + smoothCurvesFrom(pts);
+  }
   function niceCeil(v) {
     if (v <= 0) return 1;
     const exp = Math.floor(Math.log10(v));
@@ -161,7 +219,7 @@
 
     let last = null;
 
-    function draw(pts, { xMax, yMax, hasContrib }) {
+    function draw(pts, { xMax, yMax, hasContrib, withEquity }) {
       while (svg.childNodes.length > 1) svg.removeChild(svg.lastChild);
 
       // gridlines + y labels
@@ -191,31 +249,61 @@
       });
       xCap.textContent = xCaption;
 
-      // build point arrays
+      // point arrays
       const nomPts = pts.map(p => ({ x: scaleX(p.year, xMax), y: scaleY(p.nominal, yMax) }));
       const realPts = pts.map(p => ({ x: scaleX(p.year, xMax), y: scaleY(p.real, yMax) }));
       const contribPts = hasContrib ? pts.map(p => ({ x: scaleX(p.year, xMax), y: scaleY(p.contrib, yMax) })) : null;
+      const portfolioPts = withEquity ? pts.map(p => ({ x: scaleX(p.year, xMax), y: scaleY(p.portfolio, yMax) })) : null;
 
       const baseY = scaleY(0, yMax);
       const nomLine = smoothPath(nomPts);
       const realLine = smoothPath(realPts);
 
-      el('path', {
-        class: 'area-nominal',
-        d: `${nomLine} L${nomPts[nomPts.length-1].x},${baseY} L${nomPts[0].x},${baseY} Z`,
-      });
-      el('path', {
-        class: 'area-real-hatch',
-        fill: `url(#${hatchId})`,
-        d: `${realLine} L${realPts[realPts.length-1].x},${baseY} L${realPts[0].x},${baseY} Z`,
-      });
-      if (contribPts) {
-        el('path', { class: 'line-contrib', d: smoothPath(contribPts) });
-      }
-      el('path', { class: 'line-real', d: realLine });
-      el('path', { class: 'line-nominal', d: nomLine });
+      if (withEquity) {
+        // bottom band: portfolio area (brass)
+        const portfolioLine = smoothPath(portfolioPts);
+        el('path', {
+          class: 'area-nominal',
+          d: `${portfolioLine} L${portfolioPts[portfolioPts.length-1].x},${baseY} L${portfolioPts[0].x},${baseY} Z`,
+        });
 
-      last = { pts, nomPts, realPts, contribPts, xMax, yMax, hasContrib };
+        // stacked band: equity area between portfolio curve and net worth (top) curve
+        const reverseNomPts = [...nomPts].reverse();
+        const equityD =
+          `${portfolioLine}` +
+          ` L${nomPts[nomPts.length-1].x},${nomPts[nomPts.length-1].y}` +
+          `${smoothCurvesFrom(reverseNomPts)}` +
+          ` Z`;
+        el('path', { class: 'area-equity', d: equityD });
+
+        // contrib line (portfolio contributions only)
+        if (contribPts) el('path', { class: 'line-contrib', d: smoothPath(contribPts) });
+
+        // real line (net worth real, no hatched area in property mode)
+        el('path', { class: 'line-real', d: realLine });
+
+        // portfolio sub-line (where the band splits)
+        el('path', { class: 'line-equity', d: portfolioLine });
+
+        // nominal line on top (net worth)
+        el('path', { class: 'line-nominal', d: nomLine });
+      } else {
+        // current behaviour: brass area + hatched real area + 3 lines
+        el('path', {
+          class: 'area-nominal',
+          d: `${nomLine} L${nomPts[nomPts.length-1].x},${baseY} L${nomPts[0].x},${baseY} Z`,
+        });
+        el('path', {
+          class: 'area-real-hatch',
+          fill: `url(#${hatchId})`,
+          d: `${realLine} L${realPts[realPts.length-1].x},${baseY} L${realPts[0].x},${baseY} Z`,
+        });
+        if (contribPts) el('path', { class: 'line-contrib', d: smoothPath(contribPts) });
+        el('path', { class: 'line-real', d: realLine });
+        el('path', { class: 'line-nominal', d: nomLine });
+      }
+
+      last = { pts, nomPts, realPts, contribPts, portfolioPts, xMax, yMax, hasContrib, withEquity };
     }
 
     // ─── hover ───
@@ -263,12 +351,16 @@
 
       const yearLabel = p.year === 0 ? zeroLabel : `Year ${p.year}`;
       const cs = sym();
-      const rows = [
-        `<div class="tip-row"><span>Nominal</span><b class="tip-n">${cs}${fmtAmt(p.nominal)}</b></div>`,
-        `<div class="tip-row"><span>Real</span><b class="tip-r">${cs}${fmtAmt(p.real)}</b></div>`,
-      ];
-      if (last.hasContrib) {
-        rows.push(`<div class="tip-row"><span>Paid in</span><b>${cs}${fmtAmt(p.contrib)}</b></div>`);
+      const rows = [];
+      if (last.withEquity) {
+        rows.push(`<div class="tip-row"><span>Net worth</span><b class="tip-n">${cs}${fmtAmt(p.nominal)}</b></div>`);
+        rows.push(`<div class="tip-row"><span>Portfolio</span><b>${cs}${fmtAmt(p.portfolio)}</b></div>`);
+        rows.push(`<div class="tip-row"><span>Equity</span><b class="tip-eq">${cs}${fmtAmt(p.equity)}</b></div>`);
+        rows.push(`<div class="tip-row"><span>Real</span><b class="tip-r">${cs}${fmtAmt(p.real)}</b></div>`);
+      } else {
+        rows.push(`<div class="tip-row"><span>Nominal</span><b class="tip-n">${cs}${fmtAmt(p.nominal)}</b></div>`);
+        rows.push(`<div class="tip-row"><span>Real</span><b class="tip-r">${cs}${fmtAmt(p.real)}</b></div>`);
+        if (last.hasContrib) rows.push(`<div class="tip-row"><span>Paid in</span><b>${cs}${fmtAmt(p.contrib)}</b></div>`);
       }
       tip.innerHTML = `<div class="tip-year">${yearLabel}</div>${rows.join('')}`;
       tip.hidden = false;
@@ -289,52 +381,126 @@
   }
 
   const chartAccum = setupChart({
-    svgId: 'chart',
-    tipId: 'tip',
-    hatchId: 'hatch-accum',
-    zeroLabel: 'Today',
-    xCaption: 'years from now',
+    svgId: 'chart', tipId: 'tip', hatchId: 'hatch-accum',
+    zeroLabel: 'Today', xCaption: 'years from now',
   });
   const chartRetire = setupChart({
-    svgId: 'chart-2',
-    tipId: 'tip-2',
-    hatchId: 'hatch-retire',
-    zeroLabel: 'Retirement start',
-    xCaption: 'years into retirement',
+    svgId: 'chart-2', tipId: 'tip-2', hatchId: 'hatch-retire',
+    zeroLabel: 'Retirement start', xCaption: 'years into retirement',
   });
 
-  // ─── main render ───
+  // ─── render ───
   function render() {
-    // accumulation
     const accumPts = projectAccum();
-    const last = accumPts[accumPts.length - 1];
-    chartAccum.draw(accumPts, {
+    const portfolioLast = accumPts[accumPts.length - 1];
+    const propEnabled = state.property.enabled;
+    let propPts = null;
+    let propResult = null;
+
+    let chartPts, chartTop, chartHasContrib, chartWithEquity;
+    if (propEnabled) {
+      propResult = projectProperty(state.years * 12);
+      propPts = propResult.yearly;
+      // combine
+      chartPts = accumPts.map((p, i) => {
+        const eq = propPts[i].equity;
+        const deflator = Math.pow(1 + state.inflation, p.year);
+        return {
+          year: p.year,
+          portfolio: p.nominal,
+          equity: eq,
+          nominal: p.nominal + eq,        // net worth nominal
+          real: (p.nominal + eq) / deflator, // net worth real
+          contrib: p.contrib,
+        };
+      });
+      chartTop = chartPts[chartPts.length - 1].nominal;
+      chartHasContrib = true;
+      chartWithEquity = true;
+    } else {
+      chartPts = accumPts;
+      chartTop = portfolioLast.nominal;
+      chartHasContrib = true;
+      chartWithEquity = false;
+    }
+
+    chartAccum.draw(chartPts, {
       xMax: state.years,
-      yMax: niceCeil(last.nominal * 1.08),
-      hasContrib: true,
+      yMax: niceCeil(chartTop * 1.08),
+      hasContrib: chartHasContrib,
+      withEquity: chartWithEquity,
     });
 
-    const growth = last.nominal - last.contrib;
-    const erosion = last.nominal - last.real;
-    const multiple = last.contrib > 0 ? last.nominal / last.contrib : 0;
+    // ─── hero 1 + caption variants ───
+    const growth = portfolioLast.nominal - portfolioLast.contrib;
+    const erosion = portfolioLast.nominal - portfolioLast.real;
+    const multiple = portfolioLast.contrib > 0 ? portfolioLast.nominal / portfolioLast.contrib : 0;
     $('years-word').textContent = yearWord(state.years);
-    $('total-nominal').textContent = fmtAmt(last.nominal);
-    $('total-real').textContent = sym() + fmtAmt(last.real);
-    $('contrib-line').textContent = fmtAmt(last.contrib);
+    $('contrib-line').textContent = fmtAmt(portfolioLast.contrib);
     $('growth-line').textContent = fmtAmt(growth);
     $('multiple-line').textContent = fmtMul(multiple);
     $('erosion-line').textContent = fmtAmt(erosion);
 
-    // retirement
-    const ret = projectRetirement(last.nominal, last.real);
+    if (propEnabled) {
+      const last = chartPts[chartPts.length - 1];
+      $('total-nominal').textContent = fmtAmt(last.nominal);
+      $('caption-portfolio').hidden = true;
+      $('caption-net').hidden = false;
+      $('portfolio-nom').textContent = fmtAmt(last.portfolio);
+      $('equity-nom').textContent = fmtAmt(last.equity);
+      $('total-real-net').textContent = sym() + fmtAmt(last.real);
+    } else {
+      $('total-nominal').textContent = fmtAmt(portfolioLast.nominal);
+      $('caption-portfolio').hidden = false;
+      $('caption-net').hidden = true;
+      $('total-real').textContent = sym() + fmtAmt(portfolioLast.real);
+    }
+
+    // ─── property ledger ───
+    if (propEnabled) {
+      const propLast = propPts[propPts.length - 1];
+      const startingEquity = state.property.value - state.property.mortgageBalance;
+      const eqY1 = propPts[1] ? propPts[1].equity : startingEquity;
+      const roeY1 = startingEquity !== 0 ? ((eqY1 - startingEquity) / startingEquity) * 100 : 0;
+
+      $('prop-value-end').textContent = fmtAmt(propLast.value);
+      $('prop-equity-end').textContent = fmtAmt(propLast.equity);
+      $('prop-roe-y1').textContent = fmtPct2(roeY1);
+      const payoff = propResult.payoffMonth
+        ? `Yr ${Math.ceil(propResult.payoffMonth / 12)}`
+        : '—';
+      $('prop-payoff').textContent = payoff;
+
+      $('prop-ledger').hidden = false;
+      $('prop-ledger-rule').hidden = false;
+      // legend variants
+      document.querySelectorAll('.chart-foot .lg-label-default').forEach(el => el.hidden = true);
+      document.querySelectorAll('.chart-foot .lg-label-prop').forEach(el => el.hidden = false);
+      document.querySelector('.chart-foot .lg-equity').hidden = false;
+      document.querySelector('.chart-foot .lg-sep-equity').hidden = false;
+      // hero 2 eyebrow
+      $('ret-eyebrow-from').textContent = 'From your portfolio';
+    } else {
+      $('prop-ledger').hidden = true;
+      $('prop-ledger-rule').hidden = true;
+      document.querySelectorAll('.chart-foot .lg-label-default').forEach(el => el.hidden = false);
+      document.querySelectorAll('.chart-foot .lg-label-prop').forEach(el => el.hidden = true);
+      document.querySelector('.chart-foot .lg-equity').hidden = true;
+      document.querySelector('.chart-foot .lg-sep-equity').hidden = true;
+      $('ret-eyebrow-from').textContent = 'From which';
+    }
+
+    // ─── retirement (PORTFOLIO only, regardless of property) ───
+    const ret = projectRetirement(portfolioLast.nominal, portfolioLast.real);
     const yMaxRet = niceCeil(Math.max(...ret.points.map(p => p.nominal)) * 1.08);
     chartRetire.draw(ret.points, {
       xMax: state.retirementYears,
       yMax: yMaxRet,
       hasContrib: false,
+      withEquity: false,
     });
 
-    const effectiveRate = last.real > 0 ? (ret.wReal * 12 / last.real) * 100 : 0;
+    const effectiveRate = portfolioLast.real > 0 ? (ret.wReal * 12 / portfolioLast.real) * 100 : 0;
     $('ret-years-word').textContent = yearWord(state.retirementYears);
     $('ret-income').textContent = fmtAmt(ret.wReal);
     $('ret-income-nom').textContent = fmtAmt(ret.wNomStart);
@@ -351,13 +517,13 @@
     rangeEl.style.setProperty('--fill', ((v - min) / (max - min)) * 100 + '%');
   }
 
-  function wireMoney(rangeId, numId, key) {
+  function wireMoney(rangeId, numId, set) {
     const range = $(rangeId);
     const num = $(numId);
     setSliderFill(range);
     range.addEventListener('input', () => {
-      state[key] = parseFloat(range.value);
-      num.value = fmtAmt(state[key]);
+      set(parseFloat(range.value));
+      num.value = fmtAmt(parseFloat(range.value));
       setSliderFill(range);
       render();
     });
@@ -365,21 +531,21 @@
       const v = parseNum(num.value);
       if (!isNaN(v)) {
         const clamped = Math.max(parseFloat(range.min), Math.min(parseFloat(range.max), v));
-        state[key] = clamped;
+        set(clamped);
         range.value = clamped;
         setSliderFill(range);
         render();
       }
     });
-    num.addEventListener('blur', () => { num.value = fmtAmt(state[key]); });
+    num.addEventListener('blur', () => { num.value = fmtAmt(parseFloat(range.value)); });
   }
 
-  function wirePercent(rangeId, numId, key) {
+  function wirePercent(rangeId, numId, set) {
     const range = $(rangeId);
     const num = $(numId);
     setSliderFill(range);
     range.addEventListener('input', () => {
-      state[key] = parseFloat(range.value) / 100;
+      set(parseFloat(range.value) / 100);
       num.value = parseFloat(range.value).toFixed(1);
       setSliderFill(range);
       render();
@@ -388,19 +554,67 @@
       const v = parseDecimal(num.value);
       if (!isNaN(v)) {
         const clamped = Math.max(parseFloat(range.min), Math.min(parseFloat(range.max), v));
-        state[key] = clamped / 100;
+        set(clamped / 100);
         range.value = clamped;
         setSliderFill(range);
         render();
       }
     });
-    num.addEventListener('blur', () => { num.value = (state[key] * 100).toFixed(1); });
+    num.addEventListener('blur', () => { num.value = (parseFloat(range.value)).toFixed(1); });
   }
 
-  wireMoney('principal', 'principal-num', 'principal');
-  wireMoney('monthly', 'monthly-num', 'monthly');
-  wirePercent('return', 'return-num', 'annualReturn');
-  wirePercent('inflation', 'inflation-num', 'inflation');
+  function wireYears(rangeId, numId, set) {
+    const range = $(rangeId);
+    const num = $(numId);
+    setSliderFill(range);
+    range.addEventListener('input', () => {
+      set(parseInt(range.value, 10));
+      num.value = String(parseInt(range.value, 10));
+      setSliderFill(range);
+      render();
+    });
+    num.addEventListener('input', () => {
+      const v = parseInt(num.value, 10);
+      if (!isNaN(v)) {
+        const clamped = Math.max(parseInt(range.min, 10), Math.min(parseInt(range.max, 10), v));
+        set(clamped);
+        range.value = clamped;
+        setSliderFill(range);
+        render();
+      }
+    });
+    num.addEventListener('blur', () => { num.value = String(parseInt(range.value, 10)); });
+  }
+
+  // initialize sliders with state values, then wire them
+  function initInput(rangeId, numId, value, formatNum) {
+    $(rangeId).value = value;
+    $(numId).value = formatNum(value);
+  }
+
+  // portfolio inputs
+  initInput('principal', 'principal-num', state.principal, fmtAmt);
+  initInput('monthly', 'monthly-num', state.monthly, fmtAmt);
+  initInput('return', 'return-num', state.annualReturn * 100, v => v.toFixed(1));
+  initInput('inflation', 'inflation-num', state.inflation * 100, v => v.toFixed(1));
+
+  wireMoney('principal', 'principal-num', v => { state.principal = v; });
+  wireMoney('monthly', 'monthly-num', v => { state.monthly = v; });
+  wirePercent('return', 'return-num', v => { state.annualReturn = v; });
+  wirePercent('inflation', 'inflation-num', v => { state.inflation = v; });
+
+  // property inputs
+  initInput('prop-value', 'prop-value-num', state.property.value, fmtAmt);
+  initInput('prop-appreciation', 'prop-appreciation-num', state.property.appreciation * 100, v => v.toFixed(1));
+  initInput('prop-mortgage', 'prop-mortgage-num', state.property.mortgageBalance, fmtAmt);
+  initInput('prop-rate', 'prop-rate-num', state.property.mortgageRate * 100, v => v.toFixed(1));
+  initInput('prop-term', 'prop-term-num', state.property.termRemaining, v => String(v));
+
+  wireMoney('prop-value', 'prop-value-num', v => { state.property.value = v; saveProperty(); });
+  wirePercent('prop-appreciation', 'prop-appreciation-num', v => { state.property.appreciation = v; saveProperty(); });
+  wireMoney('prop-mortgage', 'prop-mortgage-num', v => { state.property.mortgageBalance = v; saveProperty(); });
+  wirePercent('prop-rate', 'prop-rate-num', v => { state.property.mortgageRate = v; saveProperty(); });
+  wireYears('prop-term', 'prop-term-num', v => { state.property.termRemaining = v; saveProperty(); });
 
   // ─── currency toggle ───
   function applyCurrencySymbol() {
@@ -414,7 +628,7 @@
     btn.addEventListener('click', () => {
       if (state.currency === btn.dataset.cur) return;
       state.currency = btn.dataset.cur;
-      try { localStorage.setItem('compound.currency', state.currency); } catch {}
+      try { localStorage.setItem(STORAGE_CUR, state.currency); } catch {}
       applyCurrencySymbol();
       render();
     });
@@ -436,6 +650,26 @@
   }
   wireHorizon('.horizon[data-horizon="accum"]', 'years');
   wireHorizon('.horizon[data-horizon="retire"]', 'retirementYears');
+
+  // ─── property toggle ───
+  function applyPropertyToggle() {
+    document.querySelectorAll('.prop-opt').forEach(b => {
+      const isActive = (b.dataset.prop === 'on') === state.property.enabled;
+      b.classList.toggle('active', isActive);
+    });
+    $('prop-inputs').hidden = !state.property.enabled;
+  }
+  document.querySelectorAll('.prop-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const desired = btn.dataset.prop === 'on';
+      if (state.property.enabled === desired) return;
+      state.property.enabled = desired;
+      saveProperty();
+      applyPropertyToggle();
+      render();
+    });
+  });
+  applyPropertyToggle();
 
   render();
 })();
