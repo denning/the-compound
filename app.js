@@ -28,6 +28,7 @@
       mortgageBalance: savedProp?.mortgageBalance ?? 140000,
       mortgageRate: savedProp?.mortgageRate ?? 0.04,
       termRemaining: savedProp?.termRemaining ?? 28,
+      fate: savedProp?.fate ?? 'kept', // 'kept' or 'sold' at retirement
     },
   };
 
@@ -478,8 +479,9 @@
       document.querySelectorAll('.chart-foot .lg-label-prop').forEach(el => el.hidden = false);
       document.querySelector('.chart-foot .lg-equity').hidden = false;
       document.querySelector('.chart-foot .lg-sep-equity').hidden = false;
-      // hero 2 eyebrow
-      $('ret-eyebrow-from').textContent = 'From your portfolio';
+      // hero 2 eyebrow — depends on whether the home is being sold at retirement
+      $('ret-eyebrow-from').textContent =
+        state.property.fate === 'sold' ? 'From portfolio and home' : 'From your portfolio';
     } else {
       $('prop-ledger').hidden = true;
       $('prop-ledger-rule').hidden = true;
@@ -490,8 +492,18 @@
       $('ret-eyebrow-from').textContent = 'From which';
     }
 
-    // ─── retirement (PORTFOLIO only, regardless of property) ───
-    const ret = projectRetirement(portfolioLast.nominal, portfolioLast.real);
+    // ─── retirement drawdown pot ───
+    // by default: portfolio only. If property is included AND set to "sold at retirement",
+    // the equity at retirement is added to the pot (illiquid → liquid at the transition).
+    let drawdownNominal = portfolioLast.nominal;
+    let drawdownReal = portfolioLast.real;
+    if (propEnabled && state.property.fate === 'sold') {
+      const equityAtRetirement = propPts[propPts.length - 1].equity;
+      const deflator = Math.pow(1 + state.inflation, state.years);
+      drawdownNominal += equityAtRetirement;
+      drawdownReal += equityAtRetirement / deflator;
+    }
+    const ret = projectRetirement(drawdownNominal, drawdownReal);
     const yMaxRet = niceCeil(Math.max(...ret.points.map(p => p.nominal)) * 1.08);
     chartRetire.draw(ret.points, {
       xMax: state.retirementYears,
@@ -500,7 +512,7 @@
       withEquity: false,
     });
 
-    const effectiveRate = portfolioLast.real > 0 ? (ret.wReal * 12 / portfolioLast.real) * 100 : 0;
+    const effectiveRate = drawdownReal > 0 ? (ret.wReal * 12 / drawdownReal) * 100 : 0;
     $('ret-years-word').textContent = yearWord(state.retirementYears);
     $('ret-income').textContent = fmtAmt(ret.wReal);
     $('ret-income-nom').textContent = fmtAmt(ret.wNomStart);
@@ -679,6 +691,7 @@
       b.classList.toggle('active', isActive);
     });
     $('prop-inputs').hidden = !state.property.enabled;
+    $('prop-followup').hidden = !state.property.enabled;
   }
   document.querySelectorAll('.prop-opt').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -691,6 +704,23 @@
     });
   });
   applyPropertyToggle();
+
+  // ─── home-fate sub-toggle (kept / sold at retirement) ───
+  function applyFateToggle() {
+    document.querySelectorAll('.prop-fate-opt').forEach(b => {
+      b.classList.toggle('active', b.dataset.fate === state.property.fate);
+    });
+  }
+  document.querySelectorAll('.prop-fate-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.property.fate === btn.dataset.fate) return;
+      state.property.fate = btn.dataset.fate;
+      saveProperty();
+      applyFateToggle();
+      render();
+    });
+  });
+  applyFateToggle();
 
   render();
 })();
