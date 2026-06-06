@@ -383,6 +383,24 @@
     svg.addEventListener('touchmove', (e) => { if (e.touches[0]) showHover(e.touches[0].clientX); }, { passive: true });
     svg.addEventListener('touchend', hideHover);
 
+    // Keep the viewBox aspect in sync with the rendered size so text and
+    // gridlines don't stretch when the container is wider than 800×380.
+    function syncViewBox() {
+      const rect = svg.getBoundingClientRect();
+      if (rect.width < 10 || rect.height < 10) return;
+      if (VB.w === rect.width && VB.h === rect.height) return;
+      VB.w = rect.width;
+      VB.h = rect.height;
+      svg.setAttribute('viewBox', `0 0 ${VB.w} ${VB.h}`);
+      if (last) draw(last.pts, last);
+    }
+    syncViewBox();
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(syncViewBox).observe(svg);
+    } else {
+      window.addEventListener('resize', syncViewBox);
+    }
+
     return { draw };
   }
 
