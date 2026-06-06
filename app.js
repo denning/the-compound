@@ -20,6 +20,7 @@
   const state = {
     principal: 25000,
     monthly: 500,
+    contribGrowth: 0.01,
     annualReturn: 0.07,
     inflation: 0.02,
     years: 30,
@@ -75,14 +76,19 @@
     const months = years * 12;
     const rM = state.annualReturn / 12;
     const iM = Math.pow(1 + state.inflation, 1 / 12) - 1;
+    // Monthly addition is interpreted in today's money. Nominally it grows
+    // each month so it tracks inflation and adds the real growth on top.
+    const cM = Math.pow((1 + state.inflation) * (1 + state.contribGrowth), 1 / 12) - 1;
     const points = [];
     let bal = state.principal;
     let contrib = state.principal;
     let deflator = 1;
+    let monthlyNom = state.monthly;
     points.push({ year: 0, nominal: bal, real: bal, contrib });
     for (let m = 1; m <= months; m++) {
-      bal = bal * (1 + rM) + state.monthly;
-      contrib += state.monthly;
+      bal = bal * (1 + rM) + monthlyNom;
+      contrib += monthlyNom;
+      monthlyNom *= 1 + cM;
       deflator *= 1 + iM;
       if (m % 12 === 0 || m === months) {
         points.push({ year: m / 12, nominal: bal, real: bal / deflator, contrib });
@@ -630,11 +636,13 @@
   // portfolio inputs
   initInput('principal', 'principal-num', state.principal, fmtAmt);
   initInput('monthly', 'monthly-num', state.monthly, fmtAmt);
+  initInput('contrib-growth', 'contrib-growth-num', state.contribGrowth * 100, v => v.toFixed(1));
   initInput('return', 'return-num', state.annualReturn * 100, v => v.toFixed(1));
   initInput('inflation', 'inflation-num', state.inflation * 100, v => v.toFixed(1));
 
   wireMoney('principal', 'principal-num', v => { state.principal = v; });
   wireMoney('monthly', 'monthly-num', v => { state.monthly = v; });
+  wirePercent('contrib-growth', 'contrib-growth-num', v => { state.contribGrowth = v; });
   wirePercent('return', 'return-num', v => { state.annualReturn = v; });
   wirePercent('inflation', 'inflation-num', v => { state.inflation = v; });
 

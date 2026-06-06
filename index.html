@@ -72,7 +72,7 @@
 
     <section class="dials">
       <span class="dials-eyebrow">— Adjust at will —</span>
-      <div class="ctrl-grid">
+      <div class="ctrl-grid ctrl-grid-5">
 
         <div class="ctrl">
           <div class="ctrl-head">
@@ -90,7 +90,7 @@
 
         <div class="ctrl">
           <div class="ctrl-head">
-            <label for="monthly">ii. Monthly addition<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Monthly addition"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Money you'll add each month from your income. Treated as steady end-of-month deposits over the entire projection.</span></span></label>
+            <label for="monthly">ii. Monthly addition<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Monthly addition"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Money you'll add each month, <em>in today's money</em>. Each year the deposit grows with inflation plus the <em>Contribution growth</em> rate, so the figure you set holds its purchasing power over the horizon.</span></span></label>
             <div class="num-field">
               <span class="prefix js-sym">€</span>
               <input type="text" inputmode="numeric" id="monthly-num" value="500" />
@@ -104,7 +104,21 @@
 
         <div class="ctrl">
           <div class="ctrl-head">
-            <label for="return">iii. Annual return<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Annual return"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Expected nominal annual return on invested capital, before inflation. Long-run global stocks sit near <em>7%</em>; balanced portfolios <em>5–6%</em>; bonds <em>3–4%</em>.</span></span></label>
+            <label for="contrib-growth">iii. Contribution growth<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Contribution growth"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How much your contributions grow each year <em>above inflation</em>. <em>0%</em> holds them steady in today's money; <em>1–2%</em> reflects typical real wage growth over a career; negative figures model a step down in income.</span></span></label>
+            <div class="num-field">
+              <input type="text" inputmode="decimal" id="contrib-growth-num" value="1.0" />
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="slider-rail">
+            <input type="range" id="contrib-growth" min="-2" max="5" step="0.1" value="1" />
+          </div>
+          <div class="range-marks"><span>−2%</span><span>5%</span></div>
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head">
+            <label for="return">iv. Annual return<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Annual return"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Expected nominal annual return on invested capital, before inflation. Long-run global stocks sit near <em>7%</em>; balanced portfolios <em>5–6%</em>; bonds <em>3–4%</em>.</span></span></label>
             <div class="num-field">
               <input type="text" inputmode="decimal" id="return-num" value="7.0" />
               <span class="suffix">%</span>
@@ -118,7 +132,7 @@
 
         <div class="ctrl">
           <div class="ctrl-head">
-            <label for="inflation">iv. Inflation<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Inflation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How fast prices rise each year, eroding purchasing power. The ECB targets <em>2%</em>; treating it as constant over decades is a simplification.</span></span></label>
+            <label for="inflation">v. Inflation<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Inflation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How fast prices rise each year, eroding purchasing power. The ECB targets <em>2%</em>; treating it as constant over decades is a simplification.</span></span></label>
             <div class="num-field">
               <input type="text" inputmode="decimal" id="inflation-num" value="2.0" />
               <span class="suffix">%</span>
