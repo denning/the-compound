@@ -50,6 +50,9 @@
       <p class="caption" id="caption-net" hidden data-i18n="hero1.caption.net">
         …being your portfolio of <span class="pull-soft"><span class="js-sym">€</span><span id="portfolio-nom">1,545,130</span></span> plus property equity of <span class="pull-soft"><span class="js-sym">€</span><span id="equity-nom">285,000</span></span>, amounting in today's purchasing power to <span class="pull-real" id="total-real-net">€1,012,000</span>.
       </p>
+      <p class="caption caption-tax" id="caption-tax" hidden data-i18n="hero1.caption.tax">
+        Less <span class="pull-soft"><span class="js-sym">€</span><span id="tax-due">0</span></span> owed in capital gains tax once realised, that is <span class="pull-real" id="total-real-tax">€0</span>.
+      </p>
     </section>
 
     <hr class="rule" />
@@ -154,6 +157,19 @@
             </div>
           </div>
 
+          <div class="ctrl ctrl-compact">
+            <div class="ctrl-head">
+              <label for="tax-gains" data-i18n="input.tax-gains">Capital gains tax<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Capital gains tax"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>A flat rate charged on investment gains <em>when you sell</em>, not as you go — so the curve above stays untaxed and only the drawdown pays. Portugal levies <em>28%</em> on securities, falling to <em>19.6%</em> on holdings past eight years; Belgium and Luxembourg charge long-term holders nothing. Set it to <em>0%</em> to ignore tax entirely.</span></span></label>
+              <div class="num-field num-field-sm">
+                <input type="text" inputmode="decimal" id="tax-gains-num" value="28.0" />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+            <div class="slider-rail slider-rail-sm">
+              <input type="range" id="tax-gains" min="0" max="50" step="0.1" value="28" />
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -241,6 +257,19 @@
             </div>
             <div class="slider-rail slider-rail-sm">
               <input type="range" id="prop-term" min="0" max="40" step="1" value="20" />
+            </div>
+          </div>
+
+          <div class="ctrl ctrl-compact">
+            <div class="ctrl-head">
+              <label for="prop-tax" data-i18n="prop.tax">Gains tax, if sold<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Gains tax if sold"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Effective rate on the property's <em>appreciation from today onward</em> — charged only if the home is sold. Homes are rarely taxed like securities: Portugal taxes half the gain at your marginal rate, roughly <em>12–17%</em> in practice, and waives it entirely when a main residence is rolled into another home or, past 65, into a pension. Set <em>0%</em> for an exempt sale.</span></span></label>
+              <div class="num-field num-field-sm">
+                <input type="text" inputmode="decimal" id="prop-tax-num" value="14.0" />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+            <div class="slider-rail slider-rail-sm">
+              <input type="range" id="prop-tax" min="0" max="50" step="0.1" value="14" />
             </div>
           </div>
 

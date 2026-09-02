@@ -350,6 +350,13 @@ body {
   font-variation-settings: "opsz" 18, "SOFT" 60;
   letter-spacing: 0.005em;
 }
+/* the tax clause — a quieter footnote hanging off the caption above it */
+.caption-tax {
+  margin-top: 10px;
+  max-width: 34ch;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
 .caption .pull-real {
   font-style: normal;
   color: var(--terra);

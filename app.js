@@ -36,6 +36,7 @@
     contribGrowth: 0.01,
     annualReturn: 0.07,
     inflation: 0.02,
+    taxGains: 0.28,
     years: 30,
     retirementYears: 25,
     currency: CUR_SYMBOLS[savedCur] ? savedCur : 'EUR',
@@ -48,6 +49,7 @@
       mortgageBalance: savedProp?.mortgageBalance ?? 170000,
       mortgageRate: savedProp?.mortgageRate ?? 0.03,
       termRemaining: savedProp?.termRemaining ?? 20,
+      taxGains: savedProp?.taxGains ?? 0.14,
       fate: savedProp?.fate ?? 'kept', // 'kept' or 'sold' at retirement
     },
   };
@@ -69,6 +71,7 @@
       'hero1.eyebrow': '<span class="brk">·</span>&nbsp;&nbsp;In&nbsp;<em id="years-word">thirty</em>&nbsp;years&nbsp;&nbsp;<span class="brk">·</span>',
       'hero1.caption.portfolio': '…a projection of your savings, amounting in today\'s purchasing power to <span class="pull-real" id="total-real">€853,021</span>.',
       'hero1.caption.net': '…being your portfolio of <span class="pull-soft"><span class="js-sym">€</span><span id="portfolio-nom">1,545,130</span></span> plus property equity of <span class="pull-soft"><span class="js-sym">€</span><span id="equity-nom">285,000</span></span>, amounting in today\'s purchasing power to <span class="pull-real" id="total-real-net">€1,012,000</span>.',
+      'hero1.caption.tax': 'Less <span class="pull-soft"><span class="js-sym">€</span><span id="tax-due">0</span></span> owed in capital gains tax once realised, that is <span class="pull-real" id="total-real-tax">€0</span>.',
 
       'ledger.contributed': 'Contributed<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Contributed"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Everything you\'ll have put in — starting capital plus all monthly additions, summed over the horizon. Anything beyond this is growth.</span></span>',
       'ledger.growth': 'Compound Growth<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Compound Growth"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>What your money earned beyond what you contributed. Compounding means each year\'s growth itself earns growth — the curve steepens over time.</span></span>',
@@ -81,6 +84,7 @@
       'input.return': 'Annual return<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Annual return"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Expected nominal annual return on invested capital, before inflation. Long-run global stocks sit near <em>7%</em>; balanced portfolios <em>5–6%</em>; bonds <em>3–4%</em>.</span></span>',
       'input.inflation': 'Inflation<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Inflation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How fast prices rise each year, eroding purchasing power. The ECB targets <em>2%</em>; treating it as constant over decades is a simplification.</span></span>',
       'input.contrib-growth': 'Contribution growth<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Contribution growth"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>How much your contributions grow each year <em>above inflation</em>. <em>0%</em> holds them steady in today\'s money; <em>1–2%</em> reflects typical real wage growth over a career; negative figures model a step down in income.</span></span>',
+      'input.tax-gains': 'Capital gains tax<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Capital gains tax"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>A flat rate charged on investment gains <em>when you sell</em>, not as you go — so the curve above stays untaxed and only the drawdown pays. Portugal levies <em>28%</em> on securities, falling to <em>19.6%</em> on holdings past eight years; Belgium and Luxembourg charge long-term holders nothing. Set it to <em>0%</em> to ignore tax entirely.</span></span>',
 
       'prop.toggle.off': 'Include a property asset',
       'prop.toggle.on': 'Property asset · included',
@@ -90,6 +94,7 @@
       'prop.appreciation': 'Appreciation<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Appreciation"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual rate the property\'s value grows. <em>Distinct from your portfolio return</em> — long-run residential averages sit near <em>3–4%</em> nominal. Can be set negative to model declines.</span></span>',
       'prop.rate': 'Mortgage rate<span class="help-anchor"><button class="help-mark" type="button" aria-label="Explain Mortgage rate"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Annual interest rate on your mortgage. Assumed fixed for the duration — variable-rate mortgages are a v2 concern.</span></span>',
       'prop.term': 'Years remaining<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Years remaining"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Years left until the mortgage is fully paid off. <em>Independent of the projection horizon</em> — a 25-year mortgage with 18 years left clears at year 18, not when the chart ends.</span></span>',
+      'prop.tax': 'Gains tax, if sold<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Explain Gains tax if sold"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">On this term</span>Effective rate on the property\'s <em>appreciation from today onward</em> — charged only if the home is sold. Homes are rarely taxed like securities: Portugal taxes half the gain at your marginal rate, roughly <em>12–17%</em> in practice, and waives it entirely when a main residence is rolled into another home or, past 65, into a pension. Set <em>0%</em> for an exempt sale.</span></span>',
       'prop.term.suffix': 'yr',
       'prop.followup.label': 'At retirement, the home is',
       'prop.followup.kept': 'kept',
@@ -162,6 +167,7 @@
       'hero1.eyebrow': '<span class="brk">·</span>&nbsp;&nbsp;Через&nbsp;<em id="years-word">тридцать</em>&nbsp;лет&nbsp;&nbsp;<span class="brk">·</span>',
       'hero1.caption.portfolio': '…проекция ваших сбережений, эквивалентная по сегодняшней покупательной способности <span class="pull-real" id="total-real">€853,021</span>.',
       'hero1.caption.net': '…портфель в размере <span class="pull-soft"><span class="js-sym">€</span><span id="portfolio-nom">1 545 130</span></span> плюс капитал в недвижимости <span class="pull-soft"><span class="js-sym">€</span><span id="equity-nom">285 000</span></span>, эквивалентные по сегодняшней покупательной способности <span class="pull-real" id="total-real-net">€1 012 000</span>.',
+      'hero1.caption.tax': 'Минус <span class="pull-soft"><span class="js-sym">€</span><span id="tax-due">0</span></span> налога на прирост капитала при реализации — то есть <span class="pull-real" id="total-real-tax">€0</span>.',
 
       'ledger.contributed': 'Внесено<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Внесено»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Всё, что вы внесёте — стартовый капитал плюс все ежемесячные пополнения за весь срок. Всё сверх этого — рост.</span></span>',
       'ledger.growth': 'Сложный рост<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Сложный рост»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>То, что заработали ваши деньги сверх внесённого. Сложный процент означает, что каждый годовой прирост сам приносит доход — кривая со временем становится круче.</span></span>',
@@ -174,6 +180,7 @@
       'input.return': 'Годовая доходность<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Годовая доходность»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Ожидаемая номинальная годовая доходность инвестированного капитала до инфляции. Мировые акции на долгом сроке — около <em>7%</em>; сбалансированные портфели — <em>5–6%</em>; облигации — <em>3–4%</em>.</span></span>',
       'input.inflation': 'Инфляция<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Инфляция»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Как быстро растут цены каждый год, съедая покупательную способность. ЕЦБ целится в <em>2%</em>; принимать её постоянной на десятилетия — упрощение.</span></span>',
       'input.contrib-growth': 'Рост взносов<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Пояснить «Рост взносов»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Насколько ваши взносы растут каждый год <em>сверх инфляции</em>. <em>0%</em> держит их постоянными в сегодняшних деньгах; <em>1–2%</em> отражает типичный реальный рост зарплат за карьеру; отрицательные значения моделируют снижение дохода.</span></span>',
+      'input.tax-gains': 'Налог на прирост капитала<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Пояснить «Налог на прирост капитала»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Плоская ставка на инвестиционный доход, взимаемая <em>при продаже</em>, а не по ходу накопления — поэтому кривая выше остаётся без налога, платит только фаза изъятий. Португалия берёт <em>28%</em> с ценных бумаг и <em>19,6%</em> при владении свыше восьми лет; Бельгия и Люксембург с долгосрочных держателей не берут ничего. Поставьте <em>0%</em>, чтобы не учитывать налог.</span></span>',
 
       'prop.toggle.off': 'Добавить недвижимость',
       'prop.toggle.on': 'Недвижимость · включена',
@@ -183,6 +190,7 @@
       'prop.appreciation': 'Рост стоимости<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Рост стоимости»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Годовая ставка роста стоимости жилья. <em>Отличается от доходности портфеля</em> — долгосрочные средние по жилью около <em>3–4%</em> номинально. Можно задать отрицательной, чтобы смоделировать падение.</span></span>',
       'prop.rate': 'Ставка по ипотеке<span class="help-anchor"><button class="help-mark" type="button" aria-label="Пояснить «Ставка по ипотеке»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Годовая процентная ставка по ипотеке. Принята фиксированной на весь срок — переменные ставки оставлены на v2.</span></span>',
       'prop.term': 'Лет до погашения<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Пояснить «Лет до погашения»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Сколько лет до полного погашения ипотеки. <em>Независимо от горизонта проекции</em> — 25-летняя ипотека с оставшимися 18 годами закроется на 18-м году, а не в конце графика.</span></span>',
+      'prop.tax': 'Налог с продажи<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Пояснить «Налог с продажи»"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Об этом термине</span>Эффективная ставка на <em>подорожание с сегодняшнего дня</em> — взимается, только если жильё продаётся. Недвижимость облагается иначе, чем ценные бумаги: Португалия облагает половину прироста по предельной ставке, на практике примерно <em>12–17%</em>, и полностью освобождает, если основное жильё меняется на другое или, после 65 лет, вкладывается в пенсионный план. Ставьте <em>0%</em> для освобождённой продажи.</span></span>',
       'prop.term.suffix': 'лет',
       'prop.followup.label': 'На пенсии жильё',
       'prop.followup.kept': 'оставлено',
@@ -255,6 +263,7 @@
       'hero1.eyebrow': '<span class="brk">·</span>&nbsp;&nbsp;Over&nbsp;<em id="years-word">dertig</em>&nbsp;jaar&nbsp;&nbsp;<span class="brk">·</span>',
       'hero1.caption.portfolio': '…een projectie van uw spaargeld, met de koopkracht van vandaag gelijk aan <span class="pull-real" id="total-real">€853.021</span>.',
       'hero1.caption.net': '…uw portefeuille van <span class="pull-soft"><span class="js-sym">€</span><span id="portfolio-nom">1.545.130</span></span> plus overwaarde van <span class="pull-soft"><span class="js-sym">€</span><span id="equity-nom">285.000</span></span>, met de koopkracht van vandaag gelijk aan <span class="pull-real" id="total-real-net">€1.012.000</span>.',
+      'hero1.caption.tax': 'Minus <span class="pull-soft"><span class="js-sym">€</span><span id="tax-due">0</span></span> aan vermogenswinstbelasting bij realisatie, dat is <span class="pull-real" id="total-real-tax">€0</span>.',
 
       'ledger.contributed': 'Ingelegd<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Ingelegd"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Alles wat u zult hebben ingelegd — startkapitaal plus alle maandelijkse stortingen, opgeteld over de horizon. Wat daarbovenuit komt, is groei.</span></span>',
       'ledger.growth': 'Samengestelde groei<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Samengestelde groei"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Wat uw geld verdiende boven uw inleg. Samengestelde groei betekent dat elke jaarlijkse groei zelf weer groei oplevert — de curve wordt steiler met de tijd.</span></span>',
@@ -267,6 +276,7 @@
       'input.return': 'Jaarlijks rendement<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Jaarlijks rendement"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Verwacht nominaal jaarlijks rendement op belegd kapitaal, vóór inflatie. Wereldaandelen op lange termijn zitten rond <em>7%</em>; gespreide portefeuilles <em>5–6%</em>; obligaties <em>3–4%</em>.</span></span>',
       'input.inflation': 'Inflatie<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Inflatie"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Hoe snel prijzen elk jaar stijgen, waardoor koopkracht uitholt. De ECB streeft naar <em>2%</em>; haar over decennia constant veronderstellen is een vereenvoudiging.</span></span>',
       'input.contrib-growth': 'Inleggroei<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Uitleg Inleggroei"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Hoeveel uw inleg elk jaar groeit <em>bovenop de inflatie</em>. <em>0%</em> houdt hem constant in geld van vandaag; <em>1–2%</em> weerspiegelt de typische reële loongroei over een loopbaan; negatieve waarden modelleren een terugval in inkomen.</span></span>',
+      'input.tax-gains': 'Vermogenswinstbelasting<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Uitleg Vermogenswinstbelasting"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Een vlak tarief op beleggingswinst, geheven <em>bij verkoop</em> en niet onderweg — de curve hierboven blijft dus onbelast en alleen de opnamefase betaalt. Portugal heft <em>28%</em> op effecten, dalend naar <em>19,6%</em> na acht jaar; België en Luxemburg belasten langetermijnbeleggers niet. Zet op <em>0%</em> om belasting te negeren.</span></span>',
 
       'prop.toggle.off': 'Een woning meenemen',
       'prop.toggle.on': 'Woning · meegenomen',
@@ -276,6 +286,7 @@
       'prop.appreciation': 'Waardestijging<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Waardestijging"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Jaarlijks tempo waarmee de woningwaarde stijgt. <em>Verschillend van uw portefeuillerendement</em> — langjarige gemiddelden voor woningen liggen rond <em>3–4%</em> nominaal. Kan negatief worden ingesteld om dalingen te modelleren.</span></span>',
       'prop.rate': 'Hypotheekrente<span class="help-anchor"><button class="help-mark" type="button" aria-label="Uitleg Hypotheekrente"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Jaarlijks rentepercentage op uw hypotheek. Aangenomen vast voor de gehele looptijd — variabele hypotheken zijn voor een v2.</span></span>',
       'prop.term': 'Resterende jaren<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Uitleg Resterende jaren"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Aantal jaar tot de hypotheek volledig is afgelost. <em>Onafhankelijk van de projectiehorizon</em> — een 25-jarige hypotheek met nog 18 jaar te gaan wordt in jaar 18 afgelost, niet wanneer de grafiek eindigt.</span></span>',
+      'prop.tax': 'Winstbelasting bij verkoop<span class="help-anchor help-anchor-right"><button class="help-mark" type="button" aria-label="Uitleg Winstbelasting bij verkoop"></button><span class="help-pop" role="tooltip"><span class="help-pop-title">Over deze term</span>Effectief tarief op de <em>waardestijging vanaf vandaag</em> — alleen verschuldigd als de woning wordt verkocht. Woningen worden zelden als effecten belast: Portugal belast de helft van de winst tegen uw marginale tarief, in de praktijk ruwweg <em>12–17%</em>, en scheldt alles kwijt wanneer een hoofdverblijf wordt doorgerold naar een andere woning of, na 65, naar een pensioenproduct. Zet <em>0%</em> voor een vrijgestelde verkoop.</span></span>',
       'prop.term.suffix': 'jaar',
       'prop.followup.label': 'Bij pensioen wordt de woning',
       'prop.followup.kept': 'behouden',
@@ -457,40 +468,80 @@
     return { yearly, payoffMonth };
   }
 
-  function projectRetirement(potNominal, potReal) {
+  // Drawdown, net of capital gains tax. Each sale is part return-of-capital and
+  // part gain; only the gain is taxed, so we track the cost basis alongside the
+  // balance and charge tax on the gain fraction of every withdrawal. The basis
+  // is held in real terms and deflated monthly — that is what reproduces being
+  // taxed on *nominal* gains, which quietly raises the effective rate over time.
+  function projectRetirement(potNominal, potReal, basisReal) {
     const N = state.retirementYears;
     const months = N * 12;
     const rM = state.annualReturn / 12;
     const iM = Math.pow(1 + state.inflation, 1 / 12) - 1;
     const rrM = (1 + rM) / (1 + iM) - 1;
     const accumInflationFactor = Math.pow(1 + state.inflation, state.years);
+    const tau = state.taxGains;
 
-    let wReal;
+    // the untaxed level withdrawal — also the ceiling once tax applies
+    let w0;
     if (Math.abs(rrM) < 1e-9) {
-      wReal = potReal / months;
+      w0 = potReal / months;
     } else {
-      wReal = potReal * rrM / (1 - Math.pow(1 + rrM, -months));
+      w0 = potReal * rrM / (1 - Math.pow(1 + rrM, -months));
     }
 
-    const points = [{ year: 0, nominal: potNominal, real: potReal }];
-    let bal = potReal;
-    let totalReal = 0, totalNominal = 0;
-    let infFactor = accumInflationFactor;
-    for (let m = 1; m <= months; m++) {
-      bal = bal * (1 + rrM) - wReal;
-      infFactor *= (1 + iM);
-      totalReal += wReal;
-      totalNominal += wReal * infFactor;
-      if (m % 12 === 0 || m === months) {
-        points.push({
-          year: m / 12,
-          real: Math.max(0, bal),
-          nominal: Math.max(0, bal * infFactor),
-        });
+    // wReal is what reaches your pocket; each month we gross it up by whatever
+    // tax that withdrawal triggers, so spending stays level in real terms.
+    const sim = (wReal) => {
+      const points = [{ year: 0, nominal: potNominal, real: potReal }];
+      let bal = potReal;
+      let basis = Math.max(0, Math.min(basisReal, potReal));
+      let totalReal = 0, totalNominal = 0, taxReal = 0;
+      let infFactor = accumInflationFactor;
+      for (let m = 1; m <= months; m++) {
+        bal = bal * (1 + rrM);
+        basis /= 1 + iM;
+        const gainFrac = bal > 0 ? Math.max(0, 1 - basis / bal) : 0;
+        const gross = tau > 0 ? wReal / (1 - tau * gainFrac) : wReal;
+        taxReal += gross * tau * gainFrac;
+        basis = Math.max(0, basis - gross * (1 - gainFrac));
+        bal -= gross;
+        infFactor *= (1 + iM);
+        totalReal += wReal;
+        totalNominal += wReal * infFactor;
+        if (m % 12 === 0 || m === months) {
+          points.push({
+            year: m / 12,
+            real: Math.max(0, bal),
+            nominal: Math.max(0, bal * infFactor),
+          });
+        }
       }
+      return { points, finalBal: bal, totalReal, totalNominal, taxReal };
+    };
+
+    // The tax drag has no closed form — the taxable fraction moves as the basis
+    // depletes — so bisect for the net income the pot can actually sustain.
+    let wReal = w0;
+    if (tau > 0) {
+      let lo = 0, hi = w0;
+      for (let i = 0; i < 60; i++) {
+        const mid = (lo + hi) / 2;
+        if (sim(mid).finalBal > 0) lo = mid; else hi = mid;
+      }
+      wReal = (lo + hi) / 2;
     }
+
+    const out = sim(wReal);
     const wNomStart = wReal * accumInflationFactor * (1 + iM);
-    return { points, wReal, wNomStart, totalReal, totalNominal };
+    return {
+      points: out.points,
+      wReal,
+      wNomStart,
+      totalReal: out.totalReal,
+      totalNominal: out.totalNominal,
+      taxReal: out.taxReal,
+    };
   }
 
   // ─── helpers ───
@@ -796,6 +847,19 @@
     $('multiple-line').textContent = fmtMul(multiple);
     $('erosion-line').textContent = fmtAmt(erosion);
 
+    // Capital gains are realised, not accrued: the curves stay pre-tax because
+    // that money genuinely compounds untaxed until something is actually sold.
+    const deflatorEnd = Math.pow(1 + state.inflation, state.years);
+    const portfolioTaxNom =
+      Math.max(0, portfolioLast.nominal - portfolioLast.contrib) * state.taxGains;
+    let propTaxNom = 0;
+    if (propEnabled && state.property.fate === 'sold') {
+      // only the appreciation the projection itself generates is knowable here
+      const propGain = Math.max(0, propPts[propPts.length - 1].value - state.property.value);
+      propTaxNom = propGain * state.property.taxGains;
+    }
+    const taxNom = portfolioTaxNom + propTaxNom;
+
     if (propEnabled) {
       const last = chartPts[chartPts.length - 1];
       $('total-nominal').textContent = fmtAmt(last.nominal);
@@ -809,6 +873,15 @@
       $('caption-portfolio').hidden = false;
       $('caption-net').hidden = true;
       $('total-real').textContent = sym() + fmtAmt(portfolioLast.real);
+    }
+
+    const grossReal = propEnabled ? chartPts[chartPts.length - 1].real : portfolioLast.real;
+    if (taxNom >= 1) {
+      $('tax-due').textContent = fmtAmt(taxNom);
+      $('total-real-tax').textContent = sym() + fmtAmt(grossReal - taxNom / deflatorEnd);
+      $('caption-tax').hidden = false;
+    } else {
+      $('caption-tax').hidden = true;
     }
 
     // ─── property ledger ───
@@ -851,13 +924,16 @@
     // the equity at retirement is added to the pot (illiquid → liquid at the transition).
     let drawdownNominal = portfolioLast.nominal;
     let drawdownReal = portfolioLast.real;
+    let basisReal = portfolioLast.contrib / deflatorEnd;
     if (propEnabled && state.property.fate === 'sold') {
       const equityAtRetirement = propPts[propPts.length - 1].equity;
-      const deflator = Math.pow(1 + state.inflation, state.years);
-      drawdownNominal += equityAtRetirement;
-      drawdownReal += equityAtRetirement / deflator;
+      const netEquity = Math.max(0, equityAtRetirement - propTaxNom);
+      drawdownNominal += netEquity;
+      drawdownReal += netEquity / deflatorEnd;
+      // the proceeds arrive already taxed — no embedded gain left to charge again
+      basisReal += netEquity / deflatorEnd;
     }
-    const ret = projectRetirement(drawdownNominal, drawdownReal);
+    const ret = projectRetirement(drawdownNominal, drawdownReal, basisReal);
     const yMaxRet = niceCeil(Math.max(...ret.points.map(p => p.nominal)) * 1.08);
     chartRetire.draw(ret.points, {
       xMax: state.retirementYears,
@@ -964,12 +1040,14 @@
   initInput('contrib-growth', 'contrib-growth-num', state.contribGrowth * 100, v => v.toFixed(1));
   initInput('return', 'return-num', state.annualReturn * 100, v => v.toFixed(1));
   initInput('inflation', 'inflation-num', state.inflation * 100, v => v.toFixed(1));
+  initInput('tax-gains', 'tax-gains-num', state.taxGains * 100, v => v.toFixed(1));
 
   wireMoney('principal', 'principal-num', v => { state.principal = v; });
   wireMoney('monthly', 'monthly-num', v => { state.monthly = v; });
   wirePercent('contrib-growth', 'contrib-growth-num', v => { state.contribGrowth = v; });
   wirePercent('return', 'return-num', v => { state.annualReturn = v; });
   wirePercent('inflation', 'inflation-num', v => { state.inflation = v; });
+  wirePercent('tax-gains', 'tax-gains-num', v => { state.taxGains = v; });
 
   // property inputs
   initInput('prop-value', 'prop-value-num', state.property.value, fmtAmt);
@@ -977,12 +1055,14 @@
   initInput('prop-mortgage', 'prop-mortgage-num', state.property.mortgageBalance, fmtAmt);
   initInput('prop-rate', 'prop-rate-num', state.property.mortgageRate * 100, v => v.toFixed(1));
   initInput('prop-term', 'prop-term-num', state.property.termRemaining, v => String(v));
+  initInput('prop-tax', 'prop-tax-num', state.property.taxGains * 100, v => v.toFixed(1));
 
   wireMoney('prop-value', 'prop-value-num', v => { state.property.value = v; saveProperty(); });
   wirePercent('prop-appreciation', 'prop-appreciation-num', v => { state.property.appreciation = v; saveProperty(); });
   wireMoney('prop-mortgage', 'prop-mortgage-num', v => { state.property.mortgageBalance = v; saveProperty(); });
   wirePercent('prop-rate', 'prop-rate-num', v => { state.property.mortgageRate = v; saveProperty(); });
   wireYears('prop-term', 'prop-term-num', v => { state.property.termRemaining = v; saveProperty(); });
+  wirePercent('prop-tax', 'prop-tax-num', v => { state.property.taxGains = v; saveProperty(); });
 
   // ─── language toggle ───
   function applyTranslations() {
